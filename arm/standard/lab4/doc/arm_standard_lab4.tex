@@ -1,0 +1,254 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{4}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Input/Output in an Embedded System}
+~\\
+
+\noindent
+The purpose of this exercise is to investigate the use of devices that provide input and
+output capabilities for a processor. There are two basic techniques for dealing with I/O devices:
+program-controlled polling and interrupt-driven approaches.  You will use the polling approach 
+in this exercise, writing programs in the ARM* assembly language. 
+Your programs will be executed on an ARM processor in either the DE1-SoC or DE10-Standard
+computer system.  Parallel port interfaces, 
+as well as a timer module, will be used as examples of I/O hardware.
+
+~\\
+\noindent
+A parallel port provides for data transfer in either the input or output direction.  The 
+transfer of data is done in parallel and it may involve from 1 to 32 bits. The number of
+bits, $n$, and the type of transfer depend on the specifications of the specific parallel port 
+being used.  The parallel port interface can contain the four registers shown in
+Figure~\ref{fig:parallel}.
+
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=1]{figures/figureparallel.pdf}
+	\end{center}
+	\caption{Registers in the parallel port interface.}
+\label{fig:parallel}
+\end{figure}
+
+\noindent
+Each register is $n$ bits long. The registers have the following purpose:
+\begin{itemize}
+\item {\it Data} register: holds the $n$ bits of data that are transferred between the parallel 
+port and the ARM processor. It can be implemented as an input, output, or a bidirectional register.
+\item {\it Direction} register: defines the direction of transfer for each of the $n$
+data bits when a bidirectional interface is generated.
+\item {\it Interrupt-mask} register: used to enable interrupts from the
+input lines connected to the parallel port.
+\item {\it Edge-capture} register: indicates when a change of logic value is detected in 
+the signals on the input lines connected to the parallel port. Once a bit in the edge
+capture register becomes asserted, it will remain asserted. An edge-capture bit can be
+de-asserted by writing to it using the ARM processor.
+\end{itemize}
+\noindent
+Not all of these registers are present in some parallel ports. For example,
+the {\it Direction} register is included only when a bidirectional interface is specified.
+The {\it Interrupt-mask} and {\it Edge-capture} registers must be included if
+interrupt-driven input/output is used.
+
+~\\
+The parallel port registers are memory mapped, starting at a specific {\it base} address.
+The base address becomes the address of the {\it Data} 
+register in the parallel port. The addresses of the other three registers have offsets 
+of 4, 8, or 12 bytes (1, 2, or 3 words) from this base address. In DE-series computers parallel 
+ports are used to connect to SW slide switches, KEY pushbuttons, LEDs, and seven-segment displays.
+
+~\\
+\noindent
+{\bf Part I}
+~\\
+~\\
+\noindent
+Write an ARM assembly language program that displays a decimal digit on the seven-segment
+display {\it HEX}0. The other seven-segment 
+displays {\it HEX}$5-1$ should be blank.  
+
+~\\
+\noindent
+The DE1-SoC, and DE10-Standard, Computer contains a parallel port connected to the seven-segment 
+displays {\it HEX}$3-0$. The port is memory mapped at the base address {\sf 0xFF200020}. A
+second parallel port is connected to {\it HEX}$5-4$, at the base address {\sf 0xFF200030}. 
+Figure~\ref{fig:HEX} shows how the display segments are connected to the parallel ports.  
+
+~\\
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=1]{figures/figureHEX.pdf}
+	\end{center}
+	\caption{The parallel ports connected to the seven-segment displays {\it HEX}$5-0$.}
+\label{fig:HEX}
+\end{figure}
+
+\newpage
+Perform the following:
+
+\begin{enumerate}
+\item If {\it KEY}$_0$ is pressed on the board, you should set the number displayed on 
+{\it HEX}0 to 0. If {\it KEY}$_1$ is pressed then increment the displayed number, and 
+if {\it KEY}$_2$ is pressed then decrement the number. Pressing {\it KEY}$_3$ should 
+blank the display, and pressing any other KEY after that should return the display to 0.
+The parallel port connected to the pushbutton {\it KEYs} has the base address
+{\sf 0xFF200050}, as illustrated in Figure~\ref{fig:KEY}. In your program, use polled I/O 
+to read the {\it Data} register to see when a button is being pressed. When you are not pressing 
+any {\it KEY} the {\it Data} register provides~0, and when you press {\it KEY}$_i$ the 
+{\it Data} register provides the value 1 in bit position $i$. Once a button-press is detected,
+be sure that your program waits until the button is released. You should not use the 
+{\it Interruptmask} or {\it Edgecapture} registers for this part of the exercise.
+
+~\\
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=1]{figures/figureKEY.pdf}
+	\end{center}
+	\caption{The parallel port connected to the pushbutton {\it KEYs}.}
+\label{fig:KEY}
+\end{figure}
+
+\item Create a new folder to hold your solution for this part. Create a
+file called {\it part1.s} and type your assembly language code into this file.
+You may want to refer to a discussion, and examples of assembly-language code,
+in Part IV of Lab Exercise 2 about displaying numbers on seven-segment displays.
+
+\item
+Make a new Monitor Program project in the folder where you stored the {\it part1.s}
+file. Use either the DE1-SoC or DE10-Standard pre-built computer system for your project, 
+and select ARM as the target processor architecture.
+
+\item
+Compile, download, and test your program. 
+\end{enumerate}
+
+~\\
+\noindent
+{\bf Part II}
+~\\
+~\\
+\noindent
+Write an ARM assembly language program that displays a two-digit decimal counter on the 
+seven-segment displays {\it HEX}$1-0$. The counter should be incremented approximately
+every $0.25$ seconds. When the counter reaches the value 99, it should start again at 0.
+The counter should stop/start when any pushbutton {\it KEY} is pressed.
+
+~\\
+\noindent
+To achieve a delay of approximately 0.25 seconds, use a delay-loop in your assembly language
+code. A suitable example of such a loop is shown below.
+
+\noindent
+~\\
+\begin{lstlisting}[style=defaultArmStyle]
+DO_DELAY: 	LDR 	R7, =200000000 		// delay counter
+SUB_LOOP: 	SUBS 	R7, R7, #1
+			BNE 	SUB_LOOP
+\end{lstlisting}
+
+~\\
+\noindent
+To avoid ``missing'' any button presses while the processor is executing the delay loop, you
+should use the {\it Edgecapture} register in the {\it KEY} port, shown in Figure~\ref{fig:KEY}.
+When a pushbutton is pressed, the corresponding bit in the {\it Edgecapture} register is
+set to 1; it remains set until your program resets it back to 0 by writing into the register.
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item Create a new folder to hold your solution for this part. Create a
+file called {\it part2.s} and type your assembly language code into this file.
+
+\item
+Make a new Monitor Program project in the folder where you stored the {\it part2.s}
+file. Use the appropriate pre-built computer system for your DE-series board for this project, 
+and select ARM as the target processor architecture.
+
+\item
+Compile, download, and test your program. 
+\end{enumerate}
+
+~\\
+\noindent
+{\bf Part III}
+~\\
+~\\
+\noindent
+In Part II you used a delay loop to cause the ARM processor to wait for approximately 0.25 
+seconds. The processor loaded a large value into a register before the loop, and then 
+decremented that value until it reached 0.  In this part you are to modify your code so that a
+hardware {\it timer} is used to measure an exact delay of 0.25 seconds. 
+You should use polled I/O to
+cause the ARM processor to wait for the timer.
+
+~\\
+\noindent
+The DE-series computer systems include a number of hardware timers. For this exercise use the timer
+called the ARM A9 {\it Private Timer}. As shown in Figure~\ref{fig:timer} this timer has 
+four registers, starting at the base address {\sf 0xFFFEC600}. To use the timer you need
+to write a suitable value into the {\it Load} register. Then, you need to set the enable
+bit $E$ in the {\it Control} register to 1, to start the timer. The timer starts counting from
+the initial value in the {\it Load} register and counts down to 0 at a frequency of 200 MHz. 
+The counter will automatically reload the value in the {\it Load} register and continue counting 
+if the $A$ bit in the {\it Control} register is set to 1.  When it reaches 0, the timer sets 
+the $F$ bit in the {\it Interrupt status} register to 1.
+You should poll this bit in your program to cause the ARM processor to wait for the timer. 
+To reset the $F$ bit to 0 you have to write the value \texttt{1} into this bit-position. 
+
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=1]{figures/figuretimer.pdf}
+	\end{center}
+	\caption{The ARM A9 Private Timer registers.}
+\label{fig:timer}
+\end{figure}
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item
+Make a new folder to hold your solution for this part. Create a file called {\it part3.s} and 
+type your assembly language code into this file.  
+\item Make a new Monitor Program project for this 
+part of the exercise, and then compile, download, and test your program. 
+\end{enumerate}
+
+\newpage
+\noindent
+{\bf Part IV}
+~\\
+~\\
+\noindent
+In this part you are to write an assembly language program that implements a real-time clock. 
+Display the time on the seven-segment displays {\it HEX}$3-0$ in the format 
+\red{SS}:\red{DD}, where \red{\it SS} are seconds and \red{\it DD} are hundredths of a second.
+Measure time intervals of 0.01 seconds in your program by using polled I/O with the ARM A9 
+Private Timer.  You should be able to stop/run the clock by pressing any pushbutton {\it KEY}.
+When the clock reaches \red{59}:\red{99}, it should wrap around to \red{00}:\red{00}.
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item Make a new folder to hold your solution for this part. Create a
+file called {\it part4.s} and type your code into this file.  
+\item Make a new Monitor Program 
+project for this part of the exercise, and then compile, download, and test your program. 
+\end{enumerate}
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

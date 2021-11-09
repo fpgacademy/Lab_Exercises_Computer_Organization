@@ -1,0 +1,375 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{8}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Using Interrupts with Assembly Language and C code}
+~\\
+
+\noindent
+The purpose of this exercise is to investigate the use of interrupts for the Nios\textsuperscript{\textregistered} II
+processor, using both assembly language and C code. To do this exercise you need to be familiar 
+with the exceptions processing mechanisms of the Nios II processor.
+You should also read the parts of the DE0-Nano, DE0-Nano-SoC, or DE10-Nano Computer documentation that pertain 
+to the use of exceptions and interrupts.
+
+~\\
+\noindent
+{\bf Part I}
+~\\\\
+\noindent
+The main program in Figure~\ref{fig:code} consists of an endless loop that comprises 
+a few logical instructions. The code in this loop does not serve any useful purpose other 
+than to provide a specific set of instructions that are being executed repeatedly: logical
+AND, Exclusive-OR, logical OR, and branch. When a pushbutton KEY is pressed to cause an 
+interrupt, the main program may be executing any of the instructions in the loop. After 
+this instruction is completed, the processor will branch to the interrupt handler. 
+Figure~\ref{fig:handler} shows most of the code for the interrupt handler. It passes to 
+the KEYs interrupt service routine, as a parameter in register r4, the machine code 
+of the next instruction to be executed in the main program. You have to write the KEYs interrupt 
+service routine. It should display on the Terminal window of the Monitor Program which 
+instruction will be executed when the processor returns to the main program. 
+You should use many of the concepts and subroutines from Exercise 7.
+An example of output on the Terminal window after several KEY presses might be:
+
+\begin{minipage}[t]{12.5 cm}
+\begin{lstlisting}
+and
+or
+br
+xor
+xor
+and
+...
+\end{lstlisting}
+\end{minipage}
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item Create a new folder to hold your Monitor Program project for this part. Create a
+file, such as {\it part1.s}, and type the assembly language code for the main program 
+into this file. 
+
+\item Create any other source code files you may want, and write the code for the
+{\it EXCEPTION\_HANDLER} and the subroutine to handle interrupts from a pushbutton key. 
+Set the exception handler to send interrupts to the Nios II processor from the pushbutton KEYs port. 
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosStyle]{../design_files/part1.s}
+\end{center}
+\caption{Main program for Part I.}
+\label{fig:code}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosStyle]{../design_files/exception_handler.s}
+\end{center}
+\caption{Exception handlers.}
+\label{fig:handler}
+\end{figure}
+~\\
+
+\item 
+To implement the KEYs interrupt service routine, you need to know the Nios II
+instruction-encodings that are shown in Figure~\ref{fig:encoding}.  Part $a$ of the figure 
+gives the encoding of R-Type instructions, which include and, xor, and 
+or. Figure~\ref{fig:encoding}$b$ gives the encoding of I-Type instructions, which includes
+the br instruction. 
+
+In part $a$ of Figure~\ref{fig:encoding} the A, B and C fields represent the three registers
+in the operation. The C field is the destination register, and the A and B fields are the operation registers.
+For example, an {\it and} operation would look like: { \sf and rC, rA, rB }.
+For the R-type instructions {\sf and, or, xor}, the OP field will always have the value 0x3A.
+The 11-bit {\sf OPX} field can be used to differentiate between processing instructions: it has values 
+{\sf 0x1C0} for {\bf and}, {\sf 0x3C0} for {\bf xor} and {\sf 0x2C0} for {\bf or}. The {\sf br} instruction
+is an I-type instruction, which has the format shown in Figure~\ref{fig:encoding}$b$. The IMM16
+field specifies a 16-bit immediate value. The OP field holds the operation to be performed. The operation code 
+for the {\bf br} instruction is {\sf 0x06}. For the branch instruction, the A and B field can be ignored.
+For more information on OP codes and Nios II instructions, please see the {\it Nios II Instruction Set} document.
+\\\\
+{\it Hint: Research the difference between the {\sf ra} and {\sf ea} registers on the Nios II Processor.}
+
+~\\
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[width=5.5in]{figures/encodingDataProcess.png}
+
+	~\\
+	{\sf (a) Nios II R-Type Instruction format}
+
+	~\\
+	\includegraphics[width=5.5in]{figures/encodingB.png}
+
+	~\\
+	{\sf (b) Nios II I-Type Instruction format}
+	\end{center}
+	\vspace{-0.25cm}\caption{The machine code format.}
+\label{fig:encoding}
+\end{figure}
+
+\newpage
+To display the name of an instruction mnemonic on the Terminal window you may wish to 
+declare some strings of data as indicated below, and write the characters in these strings to the 
+JTAG* UART that is connected to the Terminal window:
+
+\begin{minipage}[t]{12.5 cm}
+\begin{lstlisting}[style=defaultNiosStyle]
+/* .skip is for padding word alignment*/
+AND: 		.string "and\n"
+			.skip 3
+OR: 		.string "or\n"
+XOR: 		.string "xor\n"
+			.skip 3
+B: 			.string "br\n"
+\end{lstlisting}
+\end{minipage}
+
+\item
+Make a new Monitor Program project in the folder where you stored your source-code files.
+In the Monitor Program screen illustrated in Figure~\ref{fig:exceptions}, 
+choose {\sf Exceptions} in the {\it Linker Section Presets} drop-down menu.
+In the screen of Figure~\ref{fig:terminal}, select {\sf JTAG\_UART} as 
+the {\it Terminal device}.  Refer to Exercise 2, Part IV, for information on using 
+the JTAG UART to communicate with the Monitor Program's Terminal window.  
+
+\item
+Compile, download, and test your program.
+\end{enumerate}
+
+~\\
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/exceptions_s.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Selecting the {\sf Exceptions} linker section.}
+\label{fig:exceptions}
+\end{figure}
+\newpage
+
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/terminal.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Specifying the {\it Terminal device}.}
+\label{fig:terminal}
+\end{figure}
+
+\noindent
+{\bf Part II}
+~\\
+~\\
+For this part you are to modify your code from Part I so that additional information in
+displayed on the Terminal window when a pushbutton KEY is pressed. All of your changes for
+this part should be done in the interrupt service routine for the pushbutton KEYs. You
+should not have to change any other files. For Part I you were required to display only 
+the mnemonic of the next instruction, such as {\sf and} or {\sf xor}, that is to be executed in the
+main program on return from an interrupt. For this part you are to extend your solution
+so that it also displays the names of the register arguments of each instruction. Use the
+machine encodings shown in Figure~\ref{fig:encoding} to find the required information. An 
+example of output produced on the Terminal window after several KEYs have been pressed
+might be:
+
+\begin{minipage}[t]{12.5 cm}
+\begin{lstlisting}
+or    r12, r11, r10
+xor   r13, r14, r15
+and   r10, r11, r12
+or    r16, r17, r18
+and   r18, r17, r16
+...
+\end{lstlisting}
+\end{minipage}
+
+\newpage
+\noindent
+{\bf Part III}
+~\\
+~\\
+\noindent
+Consider the C code shown in Figure~\ref{fig:C_code1}. It contains an endless loop that
+repeatedly calls a function named {\it KEY\_pressed} to see if a pushbutton KEY has been pressed.
+The function {\it KEY\_pressed}, not shown in the figure, checks to see if a KEY is
+currently being pressed. If so, it waits for the KEY to be released and then returns 1. 
+Otherwise, if no KEY was pressed, 0 is returned. When {\it KEY\_pressed} returns 1, the main
+program calls a function named {\it doit}. This function is supposed to print, on the Terminal 
+window, the mnemonic of the instruction that will be executed on return from the {\it doit}
+function. In the main program {\it inline assembly} commands are used to insert specific
+instructions following each call to {\it doit}. For example, the first call to {\it doit}
+is followed by the instruction {\sf and r10, r11, r12}, the second call to {\it doit} is
+followed by the instruction {\sf xor r13, r14, r15}, and so on.
+
+~\\
+\noindent
+Part of the code for the {\it doit} function is given in Figure\ref{fig:C_code1}. It uses two
+inline assembly commands. The command
+
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[language=C]
+asm("ldw r10, 0(ra)" : : : "r10")
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+~\\
+\noindent
+loads the machine code of the instruction pointed to by the return address register into register r10. The 
+argument "r10" in this command informs the C compiler that the contents of register r10 will be 
+changed as a result of executing the instruction. The command
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[language=C]
+asm("mov \%0, r10" : "=r" (machine_code) : : )
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+~\\
+\noindent
+copies the contents of register r10 into the variable {\it machine\_code}. The argument {\sf \%0}
+in this command is set to whichever register, for example register r11, is chosen by the C
+compiler to hold the value of the variable {\it machine\_code}.  
+
+~\\
+\noindent
+Make sure that you understand how the inline assembly commands work. Documentation on
+these commands can be found by searching on the web for {\it gnu inline assembly Nios II}, or
+something similar.
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item
+Type the C code for the main program into a file, for example {\it part3.c}. Also, add
+your own code for the {\it KEY\_pressed} function.
+
+\item 
+Complete the C code for the {\it doit} function. You should display on the Terminal window
+the mnemonic of the instruction corresponding to the {\it machine\_code} variable.
+Refer to Figure~\ref{fig:encoding} for the machine code formats.
+Remember from previous exercises that the DE0-Nano, DE0-Nano-SoC, and DE10-Nano boards do not have access
+to enough memory to use library functions like {\it printf}. You should use the functions you 
+developed in previous exercises (Exercises 6 and 7) to print characters, strings and numbers
+to the JTAG terminal window.
+\\\\
+{\it Hint: In this example we are not using interrupts, how does this change the use of the 
+{\sf ra} and {\sf ea} registers in terms of accessing the next instruction to be executed in the main function?}
+
+\item
+Make a new Monitor Program project for this part of the exercise. In the Monitor Program screen 
+shown in Figure~\ref{fig:MPterminal} set the {\it Terminal device} to {\sf JTAG\_UART}.
+
+\item
+Compile, download, and test your program. 
+\end{enumerate}
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[language=C]{../design_files/part3.c}
+\end{center}
+\caption{Main program for Part III.}
+\label{fig:C_code1}
+\end{figure}
+
+\newpage
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/figureMP_terminal.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Specifying the {\it Terminal device}.}
+\label{fig:MPterminal}
+\end{figure}
+
+~\\
+~\\
+\noindent
+{\bf Part IV}
+~\\
+~\\
+\noindent
+In this part you are to repeat the tasks given in Parts I and II, but using C code rather
+than assembly-language code.
+
+~\\
+\noindent
+Consider the main program shown in Figure~\ref{fig:C_code2}. The main program calls the subroutine 
+{\it config\_KEYs()} to initialize the pushbutton KEYs port so that it will generate interrupts. 
+Finally, a subroutine {\it enable\_nios2\_interrupts()} is called to unmask IRQ interrupts in the Nios II processor.
+
+~\\
+\noindent
+After completing the initialization steps
+described above, the main program executes an endless loop that consists of several
+logical instructions. Inline assembly commands, described in Part III, are used to specify 
+the logic instructions.
+
+\begin{figure}[htb]
+\begin{center}
+\lstinputlisting[language=C]{../design_files/part4.c}
+\end{center}
+\caption{Main program for Part IV.}
+\label{fig:C_code2}
+\end{figure}
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item Create a new folder to hold your Monitor Program project for this part. Create a
+file, such as {\it part1.c}, for your main program, and create any other source-code files 
+that you may wish to use.  Write the code for the subroutines that are called by the 
+main program.
+
+\item 
+Use the exception handler code you created for Exercise 7 which called the {\it interrupt\_handler},
+and in turn called the {\it pushbutton\_ISR()} function. You should not need to change the exception 
+handler or interrupt handler code you wrote, you should only need to change the functionality of the
+{\it pushbutton\_ISR()} function.  
+~\\
+Your code should perform the same task as in Part II of this exercise. That is, you are to
+print on the Terminal window the mnemonic, and register indices, of the instruction that 
+will be executed on return from the interrupt. You can make the same assumptions as in
+Parts I and II, namely that only the logical instructions, plus the branch instruction,
+have to be handled by your code
+
+\item
+Make a new Monitor Program project in the folder where you stored your source-code files.
+As discussed for Part III, in the Monitor Program screen shown in 
+Figure~\ref{fig:MPterminal} set the {\it Terminal device} to {\sf JTAG\_UART}.
+Also, in the Monitor Program screen illustrated in Figure~\ref{fig:exceptions}, make sure 
+to choose {\sf Exceptions} in the {\it Linker Section Presets} drop-down menu.
+
+\item
+Compile, download, and test your program. 
+\end{enumerate}
+
+~\\
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/exceptions_C.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Selecting the {\sf Exceptions} linker section.}
+\label{fig:exceptions}
+\end{figure}
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

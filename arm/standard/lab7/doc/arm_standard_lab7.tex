@@ -1,0 +1,227 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{7}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Using Interrupts with C code}
+~\\
+
+\noindent
+The purpose of this exercise is to investigate the use of interrupts for the ARM* A9
+processor, using C code. To do this exercise you need to be familiar with
+the exceptions processing mechanisms of the ARM processor, and with the operation of
+the ARM Generic Interrupt Controller (GIC). These concepts are discussed in the tutorials 
+{\it Introduction to the ARM Processor}, and {\it Using the ARM Generic Interrupt
+Controller}. We assume that you are using either the DE1-SoC, or DE10-Standard Computer
+to implement the solutions to this exercise. It may be useful to read the parts of the 
+documentation for those computer systems that pertain to the use of exceptions and interrupts.
+
+~\\
+\noindent
+This exercise involves the same tasks as those given in Exercise 5,
+except that this exercise uses C code rather than assembly-language code.
+~\\
+~\\
+\noindent
+{\bf Part I}
+~\\
+~\\
+\noindent
+Consider the main program shown in Figure~\ref{fig:code}. The program first initializes the
+ARM A9 stack pointer for IRQ (interrupt) mode by calling a subroutine named
+{\it set\_A9\_IRQ\_stack()}. This step is necessary because, although
+the C compiler automatically generates code that initializes the SVC-mode (supervisor mode)
+stack pointer, the C compiler does not generate code to initialize the IRQ-mode stack pointer.
+The main program then calls subroutines {\it config\_GIC()} to initialize the generic 
+interrupt controller (GIC), and {\it config\_KEYs()} to initialize the pushbutton KEYs 
+port so that it will generate interrupts. 
+Finally, a subroutine {\it enable\_A9\_interrupts()} is called to unmask
+IRQ interrupts in the ARM processor. You are to fill in the missing code for the 
+subroutines in Figure~\ref{fig:code}. After completing the initialization steps
+described above, the main program just ``idles'' in an endless loop.
+
+~\\
+\noindent
+The purpose of your program is to show the numbers \red{0} to \red{3} on the {\it HEX}0
+to {\it HEX}3 displays, respectively, when a corresponding pushbutton {\it KEY} is pressed. 
+Since the main program only idles in a loop, you have to control the displays by using an 
+interrupt service routine for the pushbutton KEYs port.  Perform the following:
+
+\begin{enumerate}
+\item Create a new folder to hold your solution for this part. Create a
+file, such as {\it part1.c}, for your main program, and create any other source-code files 
+that you may wish to use.  Write the code for the subroutines that are called by the 
+main program. For the {\it config\_GIC()} subroutine set up the
+GIC to send interrupts to the ARM processor from the pushbutton KEYs port. 
+
+\item 
+Figure~\ref{fig:irq_code} gives the C code required for the interrupt handler. 
+It is declared with the {\bf \_$\,$\_attribute\_$\,$\_} specification {\it interrupt}, 
+and has the special name 
+{\it \_$\,$\_cs3\_isr\_irq}.  Using this declaration allows the C compiler to recognize the 
+code as being the IRQ interrupt handler. The compiler generates an entry corresponding
+to this code in the ARM exception-vector table. 
+  
+You have to write the code for the {\it pushbutton\_isr()} interrupt service routine.
+Your code should show the digit \red{0} on the {\it HEX}0 display when {\it KEY}$_0$ is
+pressed, and then if {\it KEY}$_0$ is pressed again the display should be ``blank''. You should
+toggle the {\it HEX}0 display between \red{0} and ``blank'' in this manner each time 
+{\it KEY}$_0$ is pressed. Similarly, toggle between ``blank'' and \red{1}, \red{2}, or 
+\red{3} on the {\it HEX}1 to {\it HEX}3 displays each time {\it KEY}$_1$, {\it KEY}$_2$,
+or {\it KEY}$_3$ is pressed, respectively. 
+
+The bottom part of Figure~\ref{fig:irq_code} provides code, using simple loops, which can 
+be used for the other ARM exception handlers. Including these handlers in your code is 
+optional, because the C compiler will generate these handlers automatically if they are 
+not explicitly provided. 
+
+\item
+Make a new Monitor Program project in the folder where you stored your source-code files.
+In the Monitor Program screen illustrated in Figure~\ref{fig:exceptions}, make sure 
+to choose {\sf Exceptions} in the {\it Linker Section Presets} drop-down menu.
+Compile, download, and test your program. 
+\end{enumerate}
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[language=C]{../design_files/part1.c}
+\end{center}
+\caption{Main program for Part I.}
+\label{fig:code}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[language=C]{../design_files/exceptions.c}
+\end{center}
+\vspace{-0.5cm}\caption{Exception handlers.}
+\label{fig:irq_code}
+\end{figure}
+~\\
+~\\
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/exceptions.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Selecting the {\sf Exceptions} linker section.}
+\label{fig:exceptions}
+\end{figure}
+
+\newpage
+\noindent
+{\bf Part II}
+~\\
+~\\
+\noindent
+Consider the main program shown in Figure~\ref{fig:code2}. The code has to set up 
+the ARM stack pointer for interrupt mode, initialize some devices, and then enable interrupts.
+The subroutine {\it config\_GIC( )} configures the GIC to send interrupts to the ARM 
+processor from two sources: HPS Timer 0, and the pushbutton KEYs port. The main program calls the
+subroutines {\it config\_HPS\_timer( )} and {\it config\_KEYS( )} to set up the two ports. You
+are to write each of these subroutines. Set up HPS Timer 0 to generate one interrupt
+every 0.25 seconds.
+
+~\\
+\noindent
+In Figure~\ref{fig:code2} the main program executes an endless loop writing the value of
+the global variable {\it count} to the red lights LEDR.  In the interrupt service routine for 
+HPS Timer 0 you are to increment the variable {\it count} 
+by the value of the {\it run} global variable, 
+which should be either 1 or 0.  You are to toggle the value of the {\it run} global variable 
+in the interrupt service routine for the pushbutton KEYs, each time a KEY is pressed.
+When {\it run} = 0, the main program will display a static count on the red lights,
+and when {\it run} = 1, the count shown on the red lights will increment every 0.25 seconds.
+
+~\\
+\noindent
+Make a new folder and Monitor Program project for this part, and assemble, download, and 
+test your code.
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[language=C]{../design_files/part2.c}
+\end{center}
+\caption{Main program for Part II.}
+\label{fig:code2}
+\end{figure}
+
+\newpage
+\noindent
+{\bf Part III}
+~\\
+~\\
+\noindent
+Modify your program from Part II so that you can vary the speed at which the counter
+displayed on the red lights is incremented. All of your changes for this part should be made
+in the interrupt service routine for the pushbutton KEYs. The main program and the rest of
+your code should not be changed.
+
+~\\
+\noindent
+Implement the following behavior. When {\it KEY}$_0$ is pressed, the value of the {\it run}
+variable should be toggled, as in Part I. Hence, pressing {\it KEY}$_0$ stops/runs
+the incrementing of the {\it count} variable. When {\it KEY}$_1$ is pressed, the rate at which
+the {\it count} variable is incremented should be doubled, and when {\it KEY}$_2$ is pressed the
+rate should be halved. You should implement this feature by stopping HPS Timer 0 within
+the pushbutton KEYs interrupt service routine, modifying the load value used in the
+timer, and then restarting the timer.
+
+~\\
+\noindent
+{\bf Part IV}
+~\\
+~\\
+\noindent
+For this part you are to add a third source of interrupts to your program, using the A9
+Private Timer. Set up the timer to provide an interrupt every 1/100 of a second. Use this
+timer to increment a global variable called {\it time}. You should use the {\it time} variable as
+a real-time clock that is shown on the seven-segment displays {\it HEX}$5-0$. Use the format 
+\red{MM}:\red{SS}:\red{DD}, where \red{{\it MM}} are minutes, \red{\it SS} are seconds 
+and \red{\it DD} are hundredths of a second.
+You should be able to stop/run the clock by pressing pushbutton {\it KEY}$_3$.
+When the clock reaches \red{59}:\red{59}:\red{99}, it should wrap around to 
+\red{00}:\red{00}:\red{00}.
+
+~\\
+\noindent
+Make a new folder to hold your solution for this part. Modify the main
+program from Part~III to call a new subroutine, named {\it config\_priv\_timer( )}, which 
+sets up the
+A9 Private Timer to generate the required interrupts. To show the {\it time} variable in
+the real-time clock format \red{MM}:\red{SS}:\red{DD}, you can use the same approach that was
+followed for Part 4 of Lab Exercise 6. In that previous exercise you used polled I/O with
+the private timer, whereas now you are using interrupts. One possible way to structure
+your code is illustrated in Figure~\ref{fig:code3}. In this version of the code, the 
+endless loop in the main program writes the values of variables named {\it HEX\_}3\_0
+and {\it HEX\_}5\_4 to the 7-segment displays. 
+
+~\\
+\noindent
+Using the scheme in Figure~\ref{fig:code3}, the interrupt service routine for the private 
+timer has to increment the {\it time} global variable, and also update  
+the {\it HEX\_}3\_0 and {\it HEX\_}5\_4 variables that are being written to the 
+7-segment displays by the main program.
+
+~\\
+\noindent
+Make a new Monitor Program project and test your code. 
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[language=C]{../design_files/part4.c}
+\end{center}
+\vspace{-0.5cm}\caption{Main program for Part IV.}
+\label{fig:code3}
+\end{figure}
+
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

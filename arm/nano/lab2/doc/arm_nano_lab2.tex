@@ -1,0 +1,190 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{2}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Using Logic Instructions with the ARM* Processor}
+~\\
+
+\noindent
+Logic instructions are needed in many embedded applications.  Logic instructions are useful 
+for manipulation of bit strings and for dealing with data at the bit level where only a 
+few bits may be of special interest.  They are essential in dealing with input/output tasks.
+In this exercise we will consider some typical uses.
+We will use the ARM* processor in the DE10-Nano or DE0-Nano-SoC Computer.
+
+~\\
+\noindent
+{\bf Part I}
+~\\
+~\\
+\noindent
+In this part you will implement an ARM assembly language program that counts the longest 
+string of 1's in a word of data. For example, if the word of data is {\sf 0x103fe00f}, then 
+the required result is 9.
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item Create a new folder to hold your solution for this part. Create a
+file called {\it part1.s}, and type the assembly language code shown in 
+Figure~\ref{fig:code} into this
+file. This code uses an algorithm involving shift and AND operations to find the required 
+result---make sure that you understand how this works.
+
+\begin{figure}[H]
+\begin{center}
+\begin{minipage}[t]{16.5 cm}
+\lstinputlisting[style=defaultArmStyle]{../design_files/part1.s}
+\end{minipage}
+\end{center}
+\caption{Assembly-language program that finds the largest string of 1's.}
+\label{fig:code}
+\end{figure}
+
+\item
+Make a new Monitor Program project in the folder where you stored the {\it part1.s}
+file. Use the DE10-Nano or DE0-Nano-SoC Computer for this project.
+\item
+Compile and load the program. Fix any errors that you encounter (if you mistyped some of
+the code). Once the program is loaded into memory in your DE-series board, single step
+through the code to see how the program works.
+\end{enumerate}
+\
+\noindent
+{\bf Part II}
+~\\
+~\\
+\noindent
+Perform the following.
+\begin{enumerate}
+\item Make a new folder and make a copy of the file {\it part1.s} in that new folder. Give
+the new file a name such as {\it part2.s}.
+\item In the new file {\it part2.s}, take the code which calculates the 
+number of consecutive 1's and make it into a subroutine called ONES. Have the subroutine use 
+register R1 to receive the input data and register R0 for returning the result.
+\item Add more words in memory starting from the label TEST\_NUM. You can add as many
+words as you like, but include at least 10 words. To terminate the list include the word 0
+at the end---check for this 0 entry in your main program to determine when all of the
+items in the list have been processed.
+\item In your main program, call the newly-created subroutine in a loop for every word of 
+data that you placed in memory. Keep track of the longest string of 1's in any of the words, 
+and have this result in register R5 when your program completes execution. 
+\item Make sure to use breakpoints or single-stepping in the Monitor Program to observe what 
+happens each time the ONES subroutine is called.
+\end{enumerate}
+
+\noindent
+{\bf Part III}
+~\\
+~\\
+\noindent
+One might be interested in the longest string of 0's, or even the longest string of
+alternating 1's and 0's. For example, the binary number {\sf 101101010001} has a string of 
+6 alternating 1's and 0's.
+~\\
+
+\noindent Write a new assembly language program that determines the following:
+\begin{itemize}
+\item Longest string of 1's in a word of data---put the result into register R5
+\item Longest string of 0's in a word of data---put the result into register R6
+\item Longest string of alternating 1's and 0's in a word of data---put the result into 
+register R7
+(Hint: What happens when an n-bit number is XORed with an n-bit string of alternating 0's and 1's?)
+\end{itemize}
+Make each calculation in a separate subroutine called ONES, ZEROS, and ALTERNATE. Call
+each of these subroutines in the loop that you wrote in Part II, and keep track of the
+largest result for each calculation, from your list of data.
+
+\newpage
+\noindent
+{\bf Part IV}
+~\\
+~\\
+\noindent
+In this part you are to extend your code from Part III so that the results produced are
+shown on the Terminal window of the \productNameMedTM{}.
+Each result should be displayed as a two-digit decimal number preceded by the name of the register
+the number corresponds to. You may want to use the approach discussed in Part IV of Exercise 1 to
+convert the numbers in registers R5, R6, and R7 from binary to decimal.  
+
+~\\
+\noindent
+The DE-series board can communicate with the \productNameMed{}'s Terminal through the 
+JTAG* UART.  The programming interface of the JTAG UART consists of two 32-bit registers, as
+shown in Figure~\ref{fig:UART}. The register mapped to address 0xFF201000 is called the 
+{\it Data} register and the register mapped to address 0xFF201004 is called the {\it
+Control} register.
+
+~\\
+\noindent
+The JTAG UART includes a 64-character FIFO that stores data waiting to be transmitted to the 
+host computer.  ASCII character data is loaded into this FIFO by performing a write to 
+bits 7-0 of the Data register in Figure~\ref{fig:UART}. Note that writing into this register 
+has no effect on received data. The amount of space, WSPACE, currently available in
+the transmit FIFO is provided in bits 31-16 of the Control register. If the transmit FIFO 
+is full, then any characters written to the Data register will be lost. A subroutine that 
+transmits a character to the host computer is shown in Figure~\ref{fig:jtag_out}.
+
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=1]{figures/figureJTAGUART.pdf}
+	\end{center}
+	\caption{The JTAG UART Programming Interface.}
+\label{fig:UART}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\begin{minipage}[t]{16.5 cm}
+\lstinputlisting[style=defaultArmStyle]{../design_files/jtag_out.s}
+\end{minipage}
+\end{center}
+\caption{A subroutine that sends an ASCII character to the Monitor Program Terminal.}
+\label{fig:jtag_out}
+\end{figure}
+
+\noindent
+An example of code that shows the contents of registers on the Terminal window
+is illustrated in Figure~\ref{fig:codefrag}. The code in the figure shows only the steps needed 
+to display the contents of register R5 on the Terminal. Extend the code to display the contents of 
+all three registers.
+
+\begin{figure}[H]
+\begin{center}
+\begin{minipage}[t]{16.5 cm}
+\lstinputlisting[style=defaultArmStyle]{../design_files/part4.s}
+\end{minipage}
+\end{center}
+\caption{A code fragment for showing registers in decimal on the Terminal window.}
+\label{fig:codefrag}
+\end{figure}
+
+\newpage
+\noindent
+For your Monitor Program project for this part, in the screen shown in Figure
+\ref{fig:terminal}, make sure to select {\sf JTAG\_UART\_for\_ARM\_0} as the {\it Terminal
+device}. Without this setting no character output will appear on the Terminal window when 
+your code writes to the JTAG UART.
+
+~\\
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/terminal.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Specifying the {\it Terminal device}.}
+\label{fig:terminal}
+\end{figure}
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

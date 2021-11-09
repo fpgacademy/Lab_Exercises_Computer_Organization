@@ -1,0 +1,243 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{6}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Using C code with the Nios\textsuperscript{\textregistered} II Processor}
+~\\
+
+
+This is an exercise in using C code with the Nios\textsuperscript{\textregistered} II processor
+in a DE-Series computer system. 
+We will use the {\it \productNameMedTM{}} software to compile, load,
+and run application programs written in the C language.  In this exercise
+you have to be familiar with both the C language and the Nios~II assembly language.
+You should read the parts of the Monitor Program tutorial that discuss the use of C code.  
+This tutorial can be accessed from Intel's FPGA University Program website, or by selecting
+{\sf Help $>$ Tutorial} within the Monitor Program software. You also need to be familiar
+with a number of I/O ports in the predesigned computer system for your DE-series board,
+including the parallel ports connected to the red LEDs, 7-segment displays, and pushbutton switches,
+as well as the Interval Timer port. These I/O ports are described in the documentation for your board's computer. 
+
+\section*{Part I}
+\addcontentsline{toc}{1}{Part I}
+In Exercise 1, Part II, you were given a program in the Nios~II assembly language that finds the 
+largest number in a list of 32-bit integers that is stored in the memory. This code is 
+reproduced in Figure~\ref{fig:code}. For this exercise you are to write a C-language program 
+that implements this task.
+
+Perform the following steps.
+
+\begin{enumerate}
+\item
+Write your C code in a file called {\it part1.c}.  You should use the {\it printf}
+library function to display the result produced by the program. To use the {\it printf} function 
+you have to include the {\it stdio.h} library header file in your C program by using the statement
+
+\begin{lstlisting}[language=C]
+#include<stdio.h>
+\end{lstlisting}
+
+To include a list of data words in the C program, you can declare them as an array using
+a statement such as
+
+\begin{lstlisting}[language=C]
+int LIST[8] = {7, 4, 5, 3, 6, 1, 8, 2}; // number of elements, element 1,
+                                        // element 2, ...
+\end{lstlisting}
+
+\item
+Make a new Monitor Program project for 
+this part of the exercise. In the Monitor Program screen shown in
+Figure~\ref{fig:MPprogtype} select {\sf C Program} in the {\it Program Type}
+dropdown menu, and on the screen that follows select your {\it part1.c} file. In the screen of 
+Figure~\ref{fig:MPterminal} set the {\it Terminal device} to {\sf JTAG\_UART}.
+This setting causes the output of the {\it printf} library function to appear 
+in the {\it Terminal} window of the Monitor Program graphical user interface.
+
+~\\
+Compile and download your program. Examine the disassembled code and compare it
+to the code shown in Figure~\ref{fig:code}. To see the assembly code corresponding to your 
+C source code, use the {\bf Goto instruction} dialog box in the Monitor Program's Disassembly
+window. As illustrated in Figure~\ref{fig:MPgoto}, type {\sf main} in the dialog box and then 
+click on the {\sf Go} button to display your code. When you run the program, the results
+produced by the {\it printf} function should appear in the {\it Terminal} window as indicated 
+in the figure.
+\end{enumerate}
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosStyle]{../design_files/part1.s}
+\end{center}
+\caption{Assembly-language program that finds the largest number.}
+\label{fig:code}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/figureMP_progtype.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Setting the program type.}
+\label{fig:MPprogtype}
+\end{figure}
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/figureMP_terminal.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Configuring the {\it Terminal} window.}
+\label{fig:MPterminal}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/figureMP_goto.png}
+	\end{center}
+	\caption{Displaying the code for the C program.}
+\label{fig:MPgoto}
+\end{figure}
+
+\section*{Part II}
+\addcontentsline{toc}{2}{Part II}
+Using the {\it printf} function results in a fairly large number of assembly-language instructions,
+because the standard library routines are quite complex. Modify your program to display the 
+result on the red lights {\it LEDR}, instead of using the {\it printf} statement. The
+parallel port in the computer systems is connected to the red lights is memory-mapped at the 
+address {\sf 0xFF200000}, as illustrated in Figure~\ref{fig:LEDR}.
+
+~\\
+Compile, download, and run this program. Observe the difference in the size of the
+machine code for this program as compared to the one from Part I.
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=.7]{figures/figureLEDR.pdf}
+	\end{center}
+	\caption{The parallel port connection to the red lights.}
+\label{fig:LEDR}
+\end{figure}
+
+
+\section*{Part III}
+\addcontentsline{toc}{3}{Part III}
+In Exercise 2, you were given a program that uses shift and AND operations to find the
+longest string of 1's in a word of data. The program is reproduced in
+Figure~\ref{fig:shiftAND}.  In Parts III and IV of Exercise 2, you were asked to extend
+this program so that it processed a list of data words, rather than just one word. Also,
+the program was extended to compute the longest
+strings of 1's, the longest string of 0's, and the longest string of alternating 1's and 0's
+for any of the words in the list. The results of these computations were to be shown 
+on the 7-segment displays of the computer. For this part of the exercise, you are 
+to write a C-language program to implement these tasks.
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosStyle]{../design_files/part3.s}
+\end{center}
+\caption{Assembly-language program that counts consecutive ones.}
+\label{fig:shiftAND}
+\end{figure}
+
+To include the list of data words in your C program, you can declare them as an array using
+a statement such as
+
+\begin{lstlisting}[language=C]
+int TEST_NUM[ ] = {0x0000e000, 0x3fabedef, 0x00000001, 0x00000002, 0x75a5a5a5,
+                   0x01ffC000, 0x03ffC000, 0x55555555, 0x77777777, 0x08888888,
+                   0x00000000};
+\end{lstlisting}
+
+
+Display the count for the longest string of 1's on 7-segment displays {\it HEX}$1-0$, 
+for the longest string of 0's on {\it HEX}$3-2$, and for 
+alternating 1's and 0's on {\it HEX}$5-4$. 
+The parallel ports connected to the 7-segment displays in the computer systems
+are illustrated in Figure~\ref{fig:HEX}.
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=.8]{figures/figureHEX.pdf}
+	\end{center}
+	\caption{The parallel ports connected to the 7-segment displays.}
+\label{fig:HEX}
+\end{figure}
+
+Create a new folder and Monitor Program project for your C program, and then compile,
+download, and test the code. Using the ten words of test data shown above, the correct
+result that should appear on the {\it HEX}$5-0$ displays is \red{\sf 32 31 12}.
+
+\section*{Part IV}
+\addcontentsline{toc}{4}{Part IV}
+In Exercise 4 you were asked to implement a real-time clock in the Computer System. The
+clock-time was shown on the {\it HEX}$3-0$ seven-segment displays in the format \red{SS}:\red{DD},
+with \red{\it SS} representing seconds and \red{\it DD} representing hundredths of a second.
+Time was measured in intervals of 0.01 seconds by using polled I/O with the Interval Timer, 
+and the clock could be stopped/run by pressing one of the pushbutton {\it KEYs}.
+
+~\\
+In this part of the exercise you are to write a C program that implements a real-time
+clock. Display the clock-time on the 7-segment displays {\it HEX}$5-0$
+in the format \red{MM}:\red{SS}:\red{DD}, where 
+where \red{\it MM} are minutes, \red{\it SS} are seconds, and \red{\it DD} are hundredths of 
+a second.  Measure time intervals of 0.01 seconds in your program by using polled I/O with the 
+Interval Timer.  You should be able to stop/run the clock by pressing any pushbutton {\it KEY}.
+When the clock reaches \red{59}:\red{59}:\red{99}, it should wrap around to
+\red{00}:\red{00}:\red{00}.
+
+~\\
+Make a new folder to hold your Monitor Program project for this part. Create a
+file called {\it part4.c} and type your C code into this file.  Make a new Monitor Program 
+project for this part of the exercise, and then compile, download, and test your program. 
+
+
+\section*{Part V}
+\addcontentsline{toc}{5}{Part V}
+Write a C program that scrolls the word \red{\sf intEL}
+in the right-to-left direction across the 7-segment displays.
+An example of the scrolling behaviour is given in Table~\ref{tab:scrolling}.
+You should scroll the display at a rate of 0.2 seconds per character. You should be able to stop/run the scrolling
+message by pressing the {\it KEY} pushbuttons.
+
+\begin{table}[H]
+\begin{minipage}[t]{12.5 cm}
+\begin{center}
+\begin{tabular}{c|cccccc}
+Time slot & \multicolumn{6}{c}{Display} \\
+\hline
+{\rule[0mm]{0mm}{5mm}0} &\red{i}&\red{n}&\red{t}&\red{E}&\red{L}& \\ 
+1 &\red{n}&\red{t}&\red{E}&\red{L}& & \\
+2 &\red{t}&\red{E}&\red{L}& & & \\
+3 &\red{E}&\red{L}& & & & \\
+4 &\red{L}& & & & & \\
+5 & & & & & & \\
+6 & & & & & &\red{i}\\
+7 & & & & &\red{i}&\red{n}\\
+$\ldots$ & & &$\ldots$ & &\\
+\end{tabular}
+\caption{Scrolling the message \red{\sf intEL} on {\it HEX}$5-0$.}
+\label{tab:scrolling}
+\end{center}
+\end{minipage}
+\end{table}
+
+Note that scrolling a message across the 7-segment displays is similar in nature to the 
+task of implementing a real-time clock, from Part IV. You should be able to reuse most of 
+your code from Part IV. But instead of updating the clock each time the Interval Timer
+expires, you need to update the scrolling message.  
+
+~\\
+Make a new folder to hold your Monitor Program project for this part. Create a
+file called {\it part5.c} and type your C code into this file.  Make a new Monitor Program 
+project, compile, download, and test your program. 
+
+
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

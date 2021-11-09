@@ -1,0 +1,206 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{3}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Subroutines and Stacks}
+~\\
+
+This exercise is about subroutines and subroutine linkage using the Nios\textsuperscript{\textregistered} II processor.  You will 
+learn about the concepts of parameter passing, stacks, and recursion.  For this 
+exercise you have to know the Nios~II processor architecture and its assembly language, and 
+you should have a basic understanding of the C programming language. 
+
+\section*{Part I}
+\addcontentsline{toc}{1}{Part I}
+You are to write a Nios II assembly language subroutine called FINDSUM that uses a loop to 
+compute the summation
+$\displaystyle\sum_{i=1}^{N} i$.
+~~Equivalent code for your subroutine in the C language is shown below. 
+
+~\\
+\begin{minipage}[t]{16.5 cm}
+\lstinputlisting[language=C]{../design_files/find_sum/find_sum.c}
+\end{minipage}
+
+~\\
+\noindent
+You need to provide a main program that calls your FINDSUM subroutine.
+Part of this main program is shown below.
+The value of argument $N$ that is used for your subroutine is stored
+in memory as shown in the code---your main program needs to load this value from memory and pass 
+it to the subroutine, using processor register R0. Return the result from the subroutine
+in the same register, R0.
+
+~\\
+\begin{minipage}[t]{16.5 cm}
+\lstinputlisting[style=defaultNiosStyle]{../design_files/find_sum/find_sum.s}
+\end{minipage}
+
+\newpage
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item
+Create a new folder and make a Monitor Program project for your summation code. Depending on your DE-series board, use the corresponding computer system 
+listed in Table~\ref{tab:computer_systems}.
+
+\begin{table}[H]
+	\begin{center}
+	\begin{tabular}{ l | l }
+	\bf{Board} & \bf{Computer System} \\
+	\hline
+	\rule{0pt}{3ex}DE0-Nano & DE0-Nano Computer \\
+	DE0-Nano-SoC & DE0-Nano-SoC Computer \\
+	DE10-Nano & DE10-Nano Computer \\
+	\end{tabular}
+	\caption{DE-series board computer systems}
+	\label{tab:computer_systems}
+	\end{center}
+\end{table}
+
+\item
+Assemble and download your program.  Test it for various values of $N$.
+\end{enumerate}
+
+~\\
+\noindent
+{\bf Part II}
+~\\
+~\\
+\noindent
+You are to write an assembly language program that sorts a list of 32-bit numbers 
+into descending order.  The first entry in the list gives the number of data elements to 
+be sorted, and the rest of the list provides the data. The list of data must be 
+sorted ``in place'', meaning that you are not allowed to create a copy in memory of the 
+list to do the sorting.  
+
+~\\
+\noindent
+A program written in the C language that performs the required sorting operation is shown in
+Figure~\ref{fig:C_code}. This program implements a simple bubble-sort algorithm. It uses
+an outer loop to traverse the list a number of times until sorted. An inner loop 
+calls the {\it SWAP} subroutine, not shown in the figure, which swaps the list elements in
+memory when needed.
+
+~\\
+\noindent
+Write a main program and subroutine in the Nios II assembly language that is equivalent to the C code 
+in Figure~\ref{fig:C_code}.
+Your SWAP subroutine should be passed the address of a list element in processor register R0, 
+and should provide its return value to the main program in the same register. 
+
+\begin{figure}[H]
+\begin{center}
+\begin{minipage}[t]{16.5 cm}
+\lstinputlisting[language=C, linerange=5-23]{../design_files/bubble_C/bubble.c}
+\end{minipage}
+\end{center}
+\caption{A bubble-sort algorithm.}
+\label{fig:C_code}
+\end{figure}
+
+~\\
+\noindent
+The list can be defined as part of the data for your assembly language program as follows:
+
+\begin{lstlisting}[style=defaultNiosStyle]
+List: 	.word 	10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+\end{lstlisting}
+
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item Create a new folder and make a Monitor Program project for your sorting code. Select
+the Nios II processor and use the appropriate Computer for your DE-series board.
+
+\item
+Test your algorithm with various data sets and ensure
+that the list of data is properly sorted in-place in the memory. A good debugging
+technique for this code is to use the Memory tab in the Monitor Program to view the
+contents of the list as the sorting algorithm progresses. Each time a breakpoint is reached by
+the processor (or an instruction is single-stepped), the list can be examined to see how
+the items are being swapped.
+\end{enumerate}
+
+~\\
+~\\
+\noindent
+{\bf Part III}
+~\\
+~\\
+For this part of the exercise you are to rewrite your FINDSUM subroutine from Part I to make 
+it recursive.  Equivalent C code for your subroutine is shown below.
+
+~\\
+\begin{minipage}[h]{16.5 cm}
+\lstinputlisting[language=C, linerange=14-20]{../design_files/recurse_sum/recurse.c}
+\end{minipage}
+
+~\\
+~\\
+\noindent
+In your assembly-language code, make sure to initialize the Nios II stack pointer to 
+a suitable value, and use the stack to save the state of the FINDSUM subroutine each 
+time that it recurses.
+
+~\\
+\noindent
+Create a new folder and make a Monitor Program project for your recursive code.
+Assemble, download, and test your program.
+
+~\\
+~\\
+\noindent
+{\bf Part IV}
+~\\
+~\\
+\noindent
+You are to write an assembly-language subroutine that computes the $n^{th}$ number in 
+the Fibonacci sequence.  
+
+\noindent The $n^{th}$ Fibonacci number is computed as 
+$$
+Fib(n) = Fib(n - 1) + Fib(n - 2)
+$$
+\noindent
+Note that {\it Fib}(0) = 0 and {\it Fib}(1) = 1.
+
+~\\
+\noindent
+Your subroutine has to be recursive. Equivalent C code for such a subroutine is shown below. 
+
+~\\
+\begin{minipage}[H]{16.5 cm}
+\lstinputlisting[language=C, linerange=16-22]{../design_files/recurse_Fib/recurse.c}
+\end{minipage}
+
+~\\
+\noindent
+You need to provide a main program that calls your FIBONNACI subroutine, in the same way as for
+the earlier parts of the exercise. The value of the argument $N$ should be loaded from 
+memory and passed to your subroutine.  You can assume that $N > 1$.
+
+~\\
+\noindent
+Make sure to initialize the Nios II stack pointer to 
+a suitable value, and use the stack to save the state of the FIBONNACI subroutine each 
+time that it recurses.
+
+~\\
+\noindent
+Create a new folder and make a Monitor Program project for your Fibonacci code.
+Assemble, download, and test your program.
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

@@ -1,0 +1,172 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{2}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Using Logic Instructions with the ARM* Processor}
+~\\
+
+\noindent
+Logic instructions are needed in many embedded applications.  Logic instructions are useful 
+for manipulation of bit strings and for dealing with data at the bit level where only a 
+few bits may be of special interest. They are essential in dealing with input/output tasks.
+In this exercise we will consider some typical uses. We will use the ARM* processor 
+in the DE1-SoC Computer, or DE10-Standard Computer.
+
+~\\
+\noindent
+{\bf Part I}
+~\\
+~\\
+\noindent
+In this part you will implement an ARM assembly language program that counts the longest 
+string of 1's in a word (32 bits) of data. For example, if the word of data is {\sf 0x103fe00f},
+then the required result is 9.
+
+~\\
+\noindent
+Perform the following:
+
+\begin{enumerate}
+\item Create a new folder to hold your Monitor Program project for this part. Create a
+file called {\it part1.s}, and type the assembly language code shown in 
+Figure~\ref{fig:code} into this
+file. This code uses an algorithm involving shift and AND operations to find the required 
+result---make sure that you understand how this works.
+
+\item
+Make a new Monitor Program project in the folder where you stored the {\it part1.s} file.
+Use either the DE1-SoC Computer or DE10-Standard Computer for your project.
+\item
+Compile and load the program. Fix any errors that you encounter (if you mistyped some of
+the code). Once the program is loaded into memory in your DE-series board, single step
+through the code to see how the program works.
+\end{enumerate}
+\
+\noindent
+{\bf Part II}
+~\\
+~\\
+\noindent
+Perform the following.
+\begin{enumerate}
+\item Make a new folder and make a copy of the file {\it part1.s} in that new folder. Give
+the new file a name such as {\it part2.s}.
+\item In the new file {\it part2.s}, take the code which calculates the 
+number of consecutive 1's and make it into a subroutine called ONES. Have the subroutine use 
+register R1 to receive the input data and register R0 for returning the result.
+\item Add more words in memory starting from the label TEST\_NUM. You can add as many
+words as you like, but include at least 10 words. To terminate the list include the word 0
+at the end---check for this 0 entry in your main program to determine when all of the
+items in the list have been processed.
+\item In your main program, call the newly-created subroutine in a loop for every word of 
+data that you placed in memory. Keep track of the longest string of 1's in any of the words, 
+and have this result in register R5 when your program completes execution. 
+\item Make sure to use breakpoints or single-stepping in the Monitor Program to observe what 
+happens each time the ONES subroutine is called.
+\end{enumerate}
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultArmStyle]{../design_files/part1.s}
+\end{center}
+\caption{Assembly-language program that finds the largest string of 1's.}
+\label{fig:code}
+\end{figure}
+
+\noindent
+{\bf Part III}
+~\\
+~\\
+\noindent
+One might be interested in the longest string of 0's, or even the longest string of
+alternating 1's and 0's. For example, the binary number {\sf 101101010001} has a string of 
+6 alternating 1's and 0's.
+~\\
+
+\noindent Write a new assembly language program that determines the following:
+\begin{itemize}
+\item Longest string of 1's in a word of data---put the result into register R5
+\item Longest string of 0's in a word of data---put the result into register R6
+\item Longest string of alternating 1's and 0's in a word of data---put the result into 
+register R7
+(Hint: What happens when an n-bit number is XORed with an n-bit string of alternating 0's and 1's?)
+\end{itemize}
+Make each calculation in a separate subroutine called ONES, ZEROS, and ALTERNATE. Call
+each of these subroutines in the loop that you wrote in Part III, and keep track of the
+largest result for each calculation, from your list of data.
+
+\newpage
+\noindent
+{\bf Part IV}
+~\\
+~\\
+\noindent
+In this part you are to extend your code from Part III so that the results produced are
+shown on the 7-segment displays on your DE-series board. Display the longest string of 1's
+(R5) on {\it HEX}$1-0$, the longest string of 0's (R6) on {\it HEX}$3-2$, and 
+the longest string of alternating 1's and 0's (R7) on {\it HEX}$5-4$.  
+
+~\\
+\noindent
+Each result should be displayed as a two-digit decimal number. You may want to use the approach
+discussed in Part IV of Exercise 1 to convert the numbers in registers R5, R6, and R7 from
+binary to decimal.  
+
+~\\
+\noindent
+The parallel port in the DE1-SoC, and DE10-Standard, Computer connected to the 7-segment displays 
+{\it HEX}$3-0$ is memory mapped at the address {\sf 0xFF200020}, 
+and the port connected to {\it HEX}$5-4$ is at the address {\sf 0xFF200030}. 
+Figure~\ref{fig:HEX} shows how the display segments are connected to the parallel port bits.  
+To show each of the numbers from \red{0} to \red{9} it is necessary
+to light up the appropriate
+display segments. For example, to show \red{0} on {\it HEX}0 you have to turn on all 
+of the segments except for the middle one (segment 6). Hence, you would store the
+bit-pattern $(00111111)_2$ into the address {\sf 0xFF200020} to show this result.
+A subroutine that produces such bit patterns is given in Figure~\ref{fig:code7}.
+
+~\\
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=1]{figures/figureHEX.pdf}
+	\end{center}
+	\caption{The parallel ports connected to the seven-segment displays {\it HEX}$5-0$.}
+\label{fig:HEX}
+\end{figure}
+
+~\\
+\noindent
+An example of code that shows the content of registers on the 7-segment displays
+is illustrated in Figure~\ref{fig:codefrag}. Note that this code uses the DIVIDE subroutine that 
+was discussed in Part IV of Exercise 1.  The code in the figure shows only the steps needed 
+for register R5.  You will need to extend the code to display all three registers on the 7-segment
+displays as described above.
+
+~\\
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultArmStyle, linerange=0-12]{../design_files/part4.s}
+\end{center}
+\caption{A subroutine that produces bit patterns for 7-segment displays.}
+\label{fig:code7}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultArmStyle, linerange=14-33]{../design_files/part4.s}
+\end{center}
+\caption{A code fragment for showing registers in decimal on 7-segment displays.}
+\label{fig:codefrag}
+\end{figure}
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

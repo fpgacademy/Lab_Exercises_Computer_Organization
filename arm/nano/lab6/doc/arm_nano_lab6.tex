@@ -1,0 +1,291 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{6}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Using C code with the ARM* Processor}
+~\\
+
+\noindent
+This is an exercise in using C code with the ARM* processor.  We will use 
+the {\it \productNameMedTM{}} software to compile, load, and run application programs
+written in the C language.  In this exercise you have to be familiar with both the C language 
+and the ARM assembly language.  You should read the parts of the Monitor Program tutorial that 
+discuss the use of C code.  This tutorial can be accessed from Intel's FPGA University Program 
+website, or by selecting {\sf Help $>$ Tutorial} within the Monitor Program software.
+We assume that you are using the DE10-Nano Computer system to implement your solutions. 
+You need to be familiar with a number of I/O ports in this system, including the parallel ports 
+connected to the lights and switches, as well as the A9 Private Timer port.
+These I/O ports are described in the documentation for the computer system. 
+
+~\\
+~\\
+\noindent
+{\bf Part I}
+
+~\\
+\noindent
+In Exercise 1, Part II, you were given a program in the ARM assembly language that finds the 
+largest number in a list of 32-bit integers that is stored in the memory.  This code is 
+reproduced in Figure~\ref{fig:code}. For this exercise you are to write a C-language program 
+that implements this task.  Perform the following steps.
+
+\begin{enumerate}
+\item
+Write your C code in a file called {\it part1.c}.  You should use the {\it printf}
+library function to display the result produced by the program. To use the {\it printf} function 
+you have to include the {\it stdio.h} library header file in your C program by using the statement
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+\end{lstlisting}
+
+To include a list of data words in the C program, you can declare them as an array using a statement such as
+
+\begin{lstlisting}[language=C]
+int LIST[8] = {7, 4, 5, 3, 6, 1, 8, 2}; // number of elements, element 1, 
+                                        // element 2, ...
+\end{lstlisting}
+
+\item
+Make a new Monitor Program project for 
+this part of the exercise. In the Monitor Program screen shown in
+Figure~\ref{fig:MPprogtype} select {\sf C Program} in the {\it Program Type}
+dropdown menu, and on the screen that follows select your {\it part1.c} file. In the screen of 
+Figure~\ref{fig:MPterminal} set the {\it Terminal device} to {\sf Semihosting}.
+This setting causes the output of library functions like {\it printf} to appear 
+in the {\it Terminal} window of the Monitor Program graphical user interface.
+
+~\\
+\noindent
+Compile and download your program. Examine the disassembled code and compare it
+to the code shown in Figure~\ref{fig:code}. To see the assembly code corresponding to your 
+C source code, use the {\bf Goto instruction} dialog box in the Monitor Program's Disassembly
+window. As illustrated in Figure~\ref{fig:MPgoto}, type {\sf main} in the dialog box and then 
+click on the {\sf Go} button to display your code. When you run the program, the results
+produced by the {\it printf} function should appear in the {\it Terminal} window as indicated 
+in the figure.
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultArmStyle]{../design_files/part1.s}
+\end{center}
+\caption{Assembly-language program that finds the largest number.}
+\label{fig:code}
+\end{figure}
+
+~\\
+\noindent
+{\bf Part II}
+~\\
+~\\
+\noindent
+Using the {\it printf} function results in a fairly large number of assembly-language instructions,
+because the standard library routines are quite complex. Modify your program to display the 
+result on the green lights {\it LED}, instead of using the {\it printf} statement. The
+parallel port in the DE10-Nano Computer connected to the green lights is memory-mapped at the 
+address {\sf 0xFF200000}, as illustrated in Figure~\ref{fig:LED}.
+
+~\\
+\noindent
+Compile, download, and run this program. Observe the difference in the size of the
+machine code for this program as compared to the one from Part I.
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/figureMP_progtype.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Setting the program type.}
+\label{fig:MPprogtype}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.58]{figures/figureMP_terminal.png}
+	\end{center}
+	\vspace{-0.25cm}\caption{Configuring the {\it Terminal} window.}
+\label{fig:MPterminal}
+\end{figure}
+
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.8]{figures/figureMP_goto.png}
+	\end{center}
+	\caption{Displaying the code for the C program.}
+\label{fig:MPgoto}
+\end{figure}
+
+\end{enumerate}
+
+\begin{figure}[htb]
+	\begin{center}
+	\includegraphics[scale=1]{figures/figureLED.pdf}
+	\end{center}
+	\caption{The parallel port connected to the green lights {\it LED}.}
+\label{fig:LED}
+\end{figure}
+
+\noindent
+{\bf Part III}
+~\\
+~\\
+\noindent
+In Exercise 2 you were given a program that uses shift and AND operations to find the
+longest string of 1's in a word of data. The program is reproduced in
+Figure~\ref{fig:shiftAND}.  In Parts III and IV of Exercise 2 you were asked to extend
+this program so that it processed a list of data words, rather than just one word. Also,
+the program was extended to compute the longest
+strings of 1's, the longest string of 0's, and the longest string of alternating 1's and 0's
+for any of the words in the list. The results of these computations were to be shown 
+on the Terminal window of the Monitor Program. For this part of the exercise, you are 
+to write a C-language program to implement these tasks.
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultArmStyle]{../design_files/part3.s}
+\end{center}
+\caption{Assembly-language program that counts consecutive ones.}
+\label{fig:shiftAND}
+\end{figure}
+
+~\\
+\noindent
+To include the list of data words in your C program, you can declare an array like
+
+\noindent
+\begin{lstlisting}[language=C]
+int TEST_NUM[] = {0x0000e000, 0x3fabedef, 0x00000001, 0x00000002, 0x75a5a5a5, 
+                  0x01ffC000, 0x03ffC000, 0x55555555, 0x77777777, 0x08888888, 
+                  0x00000000};
+\end{lstlisting}
+
+\noindent
+Display the count for the longest string of 1's, 0's, and alternating 1's and 0's
+on the Terminal window.
+
+~\\
+\noindent
+Create a new folder and Monitor Program project for your C program, and then compile,
+download, and test the code. Using the ten words of test data shown above, the correct
+result that should appear on the Terminal window is:
+
+\begin{lstlisting}[language=C]
+Longest string of ones: 12
+Longest string of zeros: 31
+Longest string of alternating ones/zeros: 32
+\end{lstlisting}
+
+~\\
+~\\
+\noindent
+{\bf Part IV}
+~\\
+~\\
+\noindent
+In this part of the exercise you are to write a C program that implements a real-time
+clock. Display the clock-time on the Terminal window in the format \blue{MM}:\blue{SS}:\blue{DD}, 
+where \blue{\it MM} are minutes, \blue{\it SS} are seconds, and \blue{\it DD} are hundredths of 
+a second. Pressing pushbutton {\it KEY}$_0$ should reset the time and display 
+\blue{00}:\blue{00}:\blue{00} on the next line of the Terminal window. Since you cannot update 
+the Terminal window at the rate of 1/100 seconds (the communication speed with the Terminal 
+is too slow), you should display the current time, on the next line of the Terminal, only when
+pushbutton {\it KEY}$_1$ is pressed. Measure time intervals of 0.01 seconds in your program 
+by using polled I/O with the A9 Private Timer (a 
+similar exercise was described in Part IV of Exercise 4, but using time intervals of 1 second).
+When the clock reaches \blue{59}:\blue{59}:\blue{99} it should wrap around 
+to \blue{00}:\blue{00}:\blue{00}.
+
+~\\
+\noindent
+Make a new folder to hold your Monitor Program project for this part. Create a
+file called {\it part4.c} and type your C code into this file.  Make a new Monitor Program 
+project for this part of the exercise, and then compile, download, and test your program. 
+
+~\\
+~\\
+~\\
+\noindent
+{\bf Part V}
+~\\
+~\\
+\noindent
+Write a C program that scrolls a text message in the right-to-left direction on the 
+Terminal window. You can display any message of your choosing. As an example, if the 
+message were \blue{\sf DE10-Nano}, then Table 1 shows what the Terminal window would 
+look like in each step as the message is scrolled. You should scroll the message at a rate of 
+0.25 seconds per character. Allow the scrolling operation to stopped/run by pressing
+any pushbutton {\it KEY}.
+It is not necessary to scroll the message all the way from the right-hand side of the
+Terminal window; just start the message far enough to the right so that you can achieve 
+the scrolling-effect illustrated in Table 1.
+
+~\\
+\begin{center}
+\begin{minipage}[t]{12.5 cm}
+\begin{center}
+\begin{tabular}{c|ccccccccc}
+Time slot & \multicolumn{9}{c}{Display} \\
+\hline
+{\rule[0mm]{0mm}{5mm}0} & & & & & & & & &\blue{D}\\
+1 & & & & & & & & \blue{D} & \blue{E}\\
+2 & & & & & & & \blue{D} & \blue{E} & \blue{1}\\
+3 & & & & & & \blue{D} & \blue{E} & \blue{1} & \blue{0}\\
+4 & & & & & \blue{D} & \blue{E} & \blue{1} & \blue{0} & \blue{-}\\
+5 & & & & \blue{D} & \blue{E} & \blue{1} & \blue{0} & \blue{-} & \blue{N}\\
+6 & & & \blue{D} & \blue{E} & \blue{1} & \blue{0} & \blue{-} & \blue{N} & \blue{a}\\
+7 & & \blue{D} & \blue{E} & \blue{1} & \blue{0} & \blue{-} & \blue{N} & \blue{a} & \blue{n}\\
+8 & \blue{D} & \blue{E} & \blue{1} & \blue{0} & \blue{-} & \blue{N} & \blue{a} & \blue{n} & \blue{o}\\
+9 & \blue{E} & \blue{1} & \blue{0} & \blue{-} & \blue{N} & \blue{a} & \blue{n} & \blue{o} & \\
+10 & \blue{1} & \blue{0} & \blue{-} & \blue{N} & \blue{a} & \blue{n} & \blue{o} & & \\
+11 & \blue{0} & \blue{-} & \blue{N} & \blue{a} & \blue{n} & \blue{o} & & & \\
+$\ldots$ & . & . & . &\\
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+		  Table 1. Scrolling the message \blue{\sf DE10-Nano} on the Terminal window.
+\end{center}
+\end{minipage}
+\end{center}
+
+~\\
+~\\
+\noindent
+You may want to make use of the {\it video-terminal} command shown below.
+Sending this string of characters to the Terminal window causes it to return the ``cursor'' to 
+the top-left corner of the window. The command can be declared as a string, named {\it home} in
+this example, that can be sent to the Terminal window:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[language=C]
+char home[] = "\033[H";
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+~\\
+Note that scrolling a message is similar in nature to the 
+task of implementing a real-time clock, from Part IV. You should be able to reuse most of 
+your code from Part IV. But instead of updating the clock display each time the A9 Private Timer
+expires, you need to update the scrolling message.  
+
+~\\
+\noindent
+Make a new folder to hold your Monitor Program project for this part. Create a
+file called {\it part5.c} and type your C code into this file.  Make a new Monitor Program 
+project, compile, download, and test your program. 
+
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

@@ -4,3 +4,18 @@ release/
 # iv Files
 *.swp
 
+.DS_Store
+niosv/standard/lab1/doc/niosv_standard_lab1.aux
+niosv/standard/lab1/doc/niosv_standard_lab1.log
+niosv/standard/lab1/doc/niosv_standard_lab1.out
+niosv/standard/lab1/doc/niosv_standard_lab1.synctex.gz
+*.aux
+*.log
+*.gz
+*.out
+/niosv/standard/lab6/solutions
+/niosv/standard/lab1/solutions
+/niosv/standard/lab2/solutions
+/niosv/standard/lab3/solutions
+/niosv/standard/lab4/solutions
+/niosv/standard/lab5/solutions

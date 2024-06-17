@@ -1,0 +1,113 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{2}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+
+\centerline{\huge Computer Organization}
+~\\
+\centerline{\huge Laboratory Exercise \LabNum}
+~\\
+\centerline{\large Using Logic Instructions with the Nios\textsuperscript{\textregistered} V Processor}
+~\\
+
+Logic instructions are needed in many embedded applications.  Logic instructions are useful 
+for manipulation of bit strings and for dealing with data at the bit level where only a 
+few bits may be of special interest. They are essential in dealing with input/output tasks.
+In this exercise we will consider some typical uses. We will assume that you are using the 
+Nios\textsuperscript{\textregistered}~V processor in the DE1-SoC Computer (this
+laboratory exercise can be done using any DE-series board that supports Nios~V).
+
+~\\
+As described for Laboratory Exercise 1, you may want to develop and debug your Nios~V
+programs by using the {\it CPUlator} simulation tool. If you have access to a physical DE1-SoC
+board, then you may also want to implement your Nios~V programs on the DE1-SoC hardware by 
+using the {\it Monitor Program} application.
+
+\section*{Part I}
+\addcontentsline{toc}{1}{Part I}
+In this part you will implement a Nios~V assembly-language program that counts the longest 
+string of 1's in a word of data. For example, if the word of data is {\sf 0x103fe00f}, then 
+the required result is 9.
+
+~\\
+Perform the following:
+
+\begin{enumerate}
+\item Create a new folder to store your solution for this part of the exercise. Create a
+file called {\it part1.s}, and store the assembly language code shown in Figure~\ref{fig:code}
+in this file (the {\it part1.s} file is provided as part of the {\it design files} for this 
+lab exercise). This code uses an algorithm involving shift and 
+AND operations to find the required result---make sure that you understand how this works.
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosVStyle]{../design_files/part1.s}
+\end{center}
+\caption{Assembly-language program that counts consecutive ones.}
+\label{fig:code}
+\end{figure}
+
+\newpage
+\item
+If you are using the {\it Monitor Program}, then make a new project in the folder where you 
+stored the {\it part1.s} file. Use the DE1-SoC Computer for your project. If you are using 
+{\it CPUlator}, then no project is used---you would just load the file {\it part1.s} into 
+the {\it CPUlator} as we discussed in Laboratory Exercise 1.
+\item
+Compile and load the program. Fix any errors that you encounter (if you mistyped some of
+the code). Once the program is loaded into memory in your DE1-SoC board (or the {\it simulated}
+memory in {\it CPUlator}), single step through the code to observe the program's operation.
+\end{enumerate}
+
+\section*{Part II}
+\addcontentsline{toc}{2}{Part II}
+Perform the following:
+\begin{enumerate}
+\item Make a new folder and make a copy of the file {\it part1.s} in that new folder. Give
+the new file a name such as {\it part2.s}.
+\item In the new file {\it part2.s}, take the code which calculates the 
+number of consecutive 1's and make it into a subroutine called {\it ones}. The subroutine 
+should use register {\it a0} to receive the input data, and the subroutine should also 
+return its result to the main program in register {\it a0}.
+\item Add more words in memory starting from the label test\_num. You can add as many
+words as you like, but include at least 10 words. To terminate the list include the word 0
+at the end---check for this 0 entry in your main program to determine when all of the
+items in the list have been processed.
+\item In your main program, call the newly-created subroutine in a loop for every word of 
+data that you placed in memory. Keep track of the longest string of 1's in any of the words, 
+and have this result in register {\it s0} when your program completes execution. 
+An outline of the required code is shown in Figure~\ref{fig:code2}.
+\item Make sure to use breakpoints or single-stepping in the {\it CPUlator} and/or 
+{\it Monitor Program} to observe what happens each time the {\it ones} subroutine is called.
+\end{enumerate}
+
+\section*{Part III}
+\addcontentsline{toc}{3}{Part III}
+For this part you are to repeat the task from Part II, except that you should find the 
+longest string of 0's in the data words, instead of the longest string of 1's. Your code
+should be mostly the same---just replace the {\it ones} subroutine from Part II with a 
+new subroutine called {\it zeros} that finds the longest string of successive 0 bits in a
+word.
+
+\section*{Part IV}
+\addcontentsline{toc}{3}{Part III}
+For this part you are to repeat the task from Part III, except that you should find the 
+longest sequence of alternating 0's and 1's in the list of data words. For example, if a
+word contains the bits {\sf 101101010001}, then these bits have six alternating 0's and 1's.
+Your code should be mostly the same---just replace the {\it zeros} subroutine from Part III 
+with a new subroutine called {\it alt} that finds the longest string of alternating 0's
+and 1's in a word.
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosVStyle]{../design_files/part2.s}
+\end{center}
+\caption{Using a subroutine to process a list of words.}
+\label{fig:code2}
+\end{figure}
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

@@ -50,6 +50,49 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Defining a Nios V ASM highlighter for lstlisting
+\lstdefinelanguage[NiosV]{Assembler} {
+ 	morekeywords={la, li, lb, lh, lw, lbu, lhu, sb, sh, sw, sll, slli, srl, srli, sra, srai,
+    add, addi, sub, lui, auipc, xor, xori, or, ori, and, andi, not, slt, slti, sltu, sltiu,
+    seqz, snez, sgtz, sgt, sgtu, slt, mul, mulh, mulhsu, mulhu, div, divu, rem, remu,
+    ret, mret, beqz, bnez, bgtz, bltz, blez, bgt, bgtu, ble, bleu,
+    beq, bne, blt, bge, bgez, bltu, bgeu, j, jr, jal, jalr, mv, neg, ret, scall, break, nop
+    csrrw, csrrwi, csrrs, csrrsi, csrrc, csrrci, csrr, csrw, csrwi, csrs, csrsi, csrc,
+    csrci, ecall, wfi},% 	
+ 	morekeywords=[2]{.align, .ascii, .asciiz, .byte, .data, .double, .equ, .extern, .include,
+    .float, .global, .hword, .kdata, .ktext, .set, .skip, .end, .space, .text, .word},% 	
+ 	morekeywords=[3]{zero, ra, sp, gp, tp, s0, fp, t0, t1, t2, t3, t4, t5, t6,
+    s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, a0, a1, a2, a3, a4, a5, a6, a7,
+    ft0, ft1, ft2, ft3, ft4, ft5, ft6, ft7, fs0, fs1, fs2, fs3, fs4, fs5, fs6, fs7, 
+    fs8, fs9, fs10, fs11, fa0, fa1, fa2, fa3, fa4, fa5, fa6, fa7},% 	
+ 	sensitive=t,%
+ 	alsoletter=.,%
+	morestring=[b]",%
+ 	morecomment=[s]{/*}{*/},%
+ 	morecomment=[l]\#,%
+   }[keywords,comments,strings]
+   
+   %% NOTE: morekeywords=[2] are GNU directives.
+   
+   \definecolor{niosVInstructionColour}{rgb}{0.000,0.608,0.000}
+   \definecolor{niosVDirectiveColour}{rgb}{0.000,0.000,0.902}
+   \definecolor{niosVSpecialRegColour}{rgb}{0.000,0.000,0.000}
+   \definecolor{niosVStringColour}{rgb}{0.808,0.482,0.000}
+   \definecolor{NiosVCommentColour}{rgb}{0.000,0.502,0.000}
+   \definecolor{brown}{rgb}{.59,.29,.0}
+   
+   %% NOTE: To make bold use: =\bfseries\color{<colour>}
+   \lstdefinestyle{defaultNiosVStyle} {
+   language=[NiosV]{Assembler},
+   stringstyle=\color{niosVStringColour},
+   keywordstyle=\color{niosVInstructionColour},
+   keywordstyle=[2]\color{niosVDirectiveColour},
+   keywordstyle=[3]\itshape\color{niosVSpecialRegColour},
+   commentstyle=\small\color{brown}\ttfamily
+   }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Defining language style
 % ArmA9 ASM
 \lstdefinelanguage[ArmA9]{Assembler} {

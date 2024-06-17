@@ -1,0 +1,187 @@
+\documentclass[epsfig,10pt,fullpage]{article}
+
+\newcommand{\LabNum}{5}
+\newcommand{\CommonDocsPath}{../../../../common/docs}
+\input{\CommonDocsPath/preamble.tex}
+
+\begin{document}
+~\\
+\centerline{\huge Laboratory Exercise 5}
+~\\
+\centerline{\large Using Interrupts with Assembly Code}
+~\\
+
+\noindent
+The purpose of this exercise is to investigate the use of interrupts for the 
+Nios\textsuperscript{\textregistered}~V processor, using assembly language code. To do 
+this exercise you need to be familiar with the Nios~V {\it trap} processing mechanisms.
+They are described in the document entitled {\it Introduction to Nios~V}, which is
+available as part of the \texttt{Computer Organization and System Design} tutorials in the 
+{\href{https://www.fpgacademy.org/tutorials.html} {FPGAcademy.org}} website.
+We assume that you are using the {\it DE1-SoC Computer System with Nios~V},
+which is described as part of the \texttt{Computer Organization} course on
+{\href{https://www.fpgacademy.org/courses.html} {FPGAcademy.org}}. Make sure that you are
+familiar with the parts of the DE1-SoC Computer System documentation that are about
+interrupts.  A good approach is to first implement each part of this exercise by 
+using the {\it CPUlator} simulator, and then to implement your solution in a hardware board,
+if available.  If a hardware system other than the DE1-SoC Computer is being used, then 
+some parts of this exercise may need to be modified to suit the features of your board. 
+
+\section*{Part I}
+\addcontentsline{toc}{1}{Part I}
+Consider the main program shown in Figure~\ref{fig:code}.  It initializes the stack
+pointer, sets up interrupts for the {\it KEY} pushbuttons, and then enters an endless loop that
+shows the state of the {\it SW} slide switches on the red lights \red{{\it LEDR}}. Interrupts
+are set up in Lines~13 to~17. First, in Lines~13 and~14 the Nios~V {\it mtvec} control register
+is initialized with the address of the {\it trap handler} routine that should be executed when
+an interrupt occurs. This routine, which is named {\it handler} in this example, is 
+discussed below. Then, in Lines~15 and~16 the {\it mie} control register is initialized to enable
+interrupt~18, which corresponds to the {\it KEY} port. Finally, in Line~17, interrupts are 
+enabled in the Nios~V processor by setting the appropriate bit in the {\it mstatus} control
+register. Line~19 in Figure~\ref{fig:code}
+calls the {\it setup\_KEY} subroutine, which configures the {\it KEY} port 
+so that it will generate interrupts. Lines~21 to~25 read the {\it SW} switches and write to the
+\red{{\it LEDR}} lights in an endless loop. This program also writes to the \red{{\it HEX0}}
+seven-segment display, but this action is performed by the interrupt {\it handler}.
+
+\begin{figure}[H]
+\begin{center}
+\begin{minipage}[h]{14.5 cm}
+\lstinputlisting[style=defaultNiosVStyle, firstline=3, lastline=23, numbers=left]
+{../design_files/part1.s}
+\caption{Main program for Part 1.}
+\label{fig:code}
+\end{minipage}
+\end{center}
+\end{figure}
+
+The remainder of the code for this part of the exercise is shown in Figure~\ref{fig:routines}. 
+The interrupt {\it handler}, in Lines~25 to~48, first saves any registers that will be modified, and
+then reads the {\it mcause} control register. Lines~31 and ~32 check that the interrupt
+bit ($b_{31}$) of {\it mcause} is set to 1 and the IRQ number ($b_{30-0}$) has the value 18 (0x12). 
+The conditional branch in Line~33 is used to stop the program in the case that some
+unknown trap has occurred. Lines~35 to~37 clear the interrupt by clearing the {\it Edgecapture}
+register in the {\it KEY} port. Then, in Lines~40 to~43 the {\it handler} writes the
+current setting of the {\it SW} port to the \red{{\it HEX0}} display. Finally, the {\it handler}
+restores registers and returns to the main program using the \texttt{mret} instruction. 
+
+~\\
+The last part of Figure~\ref{fig:routines} shows the code that enables interrupts for all
+four pushbuttons in the {\it KEY} port, using its {\it Interruptmask} register.
+
+\begin{figure}[H]
+\begin{center}
+\begin{minipage}[h]{14.5 cm}
+\lstinputlisting[style=defaultNiosVStyle, firstline=25, firstnumber=last, numbers=left]{../design_files/part1.s}
+\caption{Routines needed for Part 1.}
+\label{fig:routines}
+\end{minipage}
+\end{center}
+\end{figure}
+
+Perform the following:
+
+\begin{enumerate}
+\item Create a file called {\it part1.s} to store the code in Figures~\ref{fig:code}
+and~\ref{fig:routines}. This code is provided as part of the Design Files for this
+exercise. 
+
+\item 
+Compile and execute your {\it part1.s} file. Make sure that you thoroughly understand how
+the code works. Try setting a breakpoint in the interrupt {\it handler} routine so that
+you can single-step the code that handles the {\it KEY} interrupts.
+\end{enumerate}
+
+\newpage
+\section*{ Part II}
+\addcontentsline{toc}{2}{Part II}
+Consider the main program shown in Figure~\ref{fig:code2}. The code is required to set up 
+the Nios~V stack pointer and to enable interrupts from two sources: the KEY pushbuttons 
+and the Nios~V Machine Timer.  These two I/O devices were introduced in Laboratory Exercise~3.
+The main program calls the subroutines {\it set\_timer} and {\it setup\_KEY} to configure
+the two ports. You are to write each of these subroutines. Set 
+up the Machine Timer to generate one interrupt every 0.25 seconds.
+
+~\\
+In Figure~\ref{fig:code2} the main program executes an endless loop writing the value of
+the global variable {\it counter} to the red lights \red{{\it LEDR}}.  In the interrupt
+{\it handler} you are to increment the variable {\it counter} 
+by the value of the {\it run} global variable, 
+which should be either 1 or 0.  You are to toggle the value of the {\it run} global variable 
+whenever a {\it KEY} interrupt occurs. 
+When {\it run} = 0, the main program will display a static count on the red lights,
+and when {\it run} = 1, the count shown on the red lights will increment every 0.25 seconds.
+
+~\\
+Type your code into a file called {\it part2.s}. Test and debug your solution.
+
+\section*{ Part III}
+\addcontentsline{toc}{3}{Part III}
+Modify your program from Part II so that you can vary the speed at which the counter
+displayed on the red lights \red{{\it LEDR}} is incremented. All of your changes for this 
+part should be made in your code that handles a {\it KEY} interrupt. The main program and 
+the rest of your code should not be changed.
+
+~\\
+Implement the following behavior. When {\it KEY}$_0$ is pressed, the value of the {\it run}
+variable should be toggled, as in Part II. Hence, pressing {\it KEY}$_0$ stops/runs
+the incrementing of the {\it counter} variable. When {\it KEY}$_1$ is pressed, the rate at which
+the {\it counter} is incremented should be doubled. Pressing {\it KEY}$_2$ should cause the rate 
+of the {\it counter} to be halved. No action is needed if {\it KEY}$_3$ is pressed.
+
+~\\
+Type your code into a file called {\it part3.s}. Test and debug your solution.
+
+\section*{ Part IV}
+\addcontentsline{toc}{4}{Part IV}
+For this part you are to create a real-time clock that is shown on the seven-segment 
+displays \red{{\it HEX3-0}}. This I/O device was introduced in Laboratory Exercise~3. 
+Set up the Machine Timer to provide an interrupt every 1/100 of a second. Use this
+timer to increment a global variable called {\it time}. You should use the {\it time} 
+variable as your real time clock. Use the format \red{SS}:\red{DD}, where \red{\it SS} 
+are seconds and \red{\it DD} are hundredths of a second.
+When the clock reaches \red{59}:\red{99}, it should wrap around to \red{00}:\red{00}.
+
+~\\
+Store your code for the real-time clock in a file called {\it part4.s}. 
+One possible way to structure your overall program is illustrated in 
+Figure~\ref{fig:code3}. The endless loop in this code writes the value of a variable 
+named {\it HEX\_code} to the \red{{\it HEX3-0}} displays. Notice that the display of the
+real-time clock is paused when any of the {\it SW} slide switches is in the on (1) position. 
+During this time the clock is still running, because timer interrupts are occurring, and when 
+all of the {\it SW} switches become off (0) the display of the updated time will resume.
+
+~\\
+The interrupt {\it handler} in your program has to increment the {\it time} variable, 
+and also update the {\it HEX\_code} variable. To convert the {\it time} value into the bit codes
+needed for the {\it HEX\_code} variable, you first need to calculate the quantity of seconds,
+{\it SS} and hundredths, {\it DD}. Then, you need to store into {\it HEX\_code} the
+corresponding bit patterns that will display the decimal (base 10) numbers \red{SS} and 
+\red{DD} on \red{{\it HEX1}} and \red{{\it HEX0}}, respectively. As indicated in 
+Figure~\ref{fig:code3} write your code for setting the {\it HEX\_code} variable in the
+subroutine named {\it display}. You may want to make use of the subroutine called
+{\it seg7\_code} that is given at the bottom of the figure. 
+
+~\\
+Test and debug your solution.
+~\\
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosVStyle, escapechar=|]{../design_files/part2.s}
+\end{center}
+\caption{Main program for Part II.}
+\label{fig:code2}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosVStyle, escapechar=|]{../design_files/part4.s}
+\end{center}
+\vspace{-0.5cm}\caption{Main program for Part IV.}
+\label{fig:code3}
+\end{figure}
+
+
+\input{\CommonDocsPath/copyright.tex}
+\end{document}

@@ -1,7 +1,6 @@
 # Program that reverses text strings
 
-            .text
-            .global _start
+.global _start
 _start:     la      s0, string0  # pointer to string
             mv      a0, s0       # pass pointer to subroutine
             jal     slen         # returns string length in a0
@@ -33,7 +32,7 @@ srev:       ...
             .
             ret
 
-            .data
+.align 4
 string0:    .asciz  "gnirts a si siht"
-            .align  4
+.align 4
 string1:    .asciz  "esrever dna daer"

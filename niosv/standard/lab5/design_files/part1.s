@@ -6,9 +6,7 @@
 .equ KEY_BASE, 0xff200050
 .equ KEY_INT, 0x40000                   # KEY port is IRQ 18
 
-            .text
-            .global _start
-
+.global _start
 _start:     li      sp, 0x20000         # set up the stack
             la      t0, handler
             csrw    mtvec, t0           # set trap address

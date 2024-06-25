@@ -1,5 +1,4 @@
-            .text
-            .global _start
+.global _start
 _start:     # set up stack location
             ... code |not| shown
             jal     set_timer           # initialize the timer
@@ -46,12 +45,8 @@ seg7_code:  la      t0, bit_codes       # starting address of the bit codes
             lb      a0, (t0)            # load the bit code
             ret
 
-            .data
+time:       .word   0                   # the time value
+HEX_code:   .word   0                   # the display codes
 # 7-segment codes for digits 0, 1, ..., 9
 bit_codes:  .byte   0x3f, 0x06, 0x5b, 0x4f, 0x66
             .byte   0x6d, 0x7d, 0x07, 0x7f, 0x67
-            .align  2
-
-time:       .word   0                   # the time value
-HEX_code:   .word   0                   # the display codes
-            .end

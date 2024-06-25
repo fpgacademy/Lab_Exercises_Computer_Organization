@@ -1,7 +1,6 @@
 # Program that counts consecutive 1's in a list of data words
 
-            .text
-            .global _start
+.global _start
 _start:     li      s0, 0        	# final result will be in s0
             la      s1, test_num 	# s1 = address of data word
 
@@ -23,7 +22,6 @@ ones:       ... code not shown
             .
             ret
 
-            .data
 test_num:   .word	0x0000e000   	# the data ...
             .word	0x3fabedef
             .word	0x00000001 							

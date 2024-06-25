@@ -1,7 +1,6 @@
 # Program that reverses a text string
 
-            .text
-            .global _start
+.global _start
 _start:     la      s0, string   # s0 pointer to first character
             mv      s1, s0
 zloop:      lb      t0, (s1)     # read the character
@@ -22,5 +21,4 @@ reverse:    bge     s0, s1, stop
 
 stop:       j       stop         # wait here
 
-            .data
 string:     .asciz  "gnirts a si siht"

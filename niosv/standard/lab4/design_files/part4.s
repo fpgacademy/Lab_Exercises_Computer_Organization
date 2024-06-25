@@ -4,8 +4,7 @@
 .equ KEY_BASE, 0xFF200050
 .equ JTAG_UART_BASE, 0xFF201000
 
-            .text
-            .global _start 
+.global _start 
 _start:     li      sp, 0x20000         # set up the stack
             la      a0, prompt          # print a prompt
             jal     puts
@@ -35,8 +34,5 @@ next:       li      a0, '\n'
             .
             .
             .
-            .data        
 prompt:     .asciz  "Press a pushbutton KEY to continue...\n" 
 string:     .asciz  "Contents of s" 
-
-            .end         

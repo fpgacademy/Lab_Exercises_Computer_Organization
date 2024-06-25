@@ -4,8 +4,7 @@
 .equ HEX3_HEX0_BASE, 0xff200020
 .equ SW_BASE, 0xff200040
 
-        .text
-        .global _start
+.global _start
 _start: li      t0, LEDR_BASE       # pointer to LEDR port
         li      t1, SW_BASE         # pointer to SW port
         li      t2, HEX3_HEX0_BASE  # pointer to HEX port

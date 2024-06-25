@@ -1,7 +1,6 @@
 # Program that counts consecutive 1's
 
-            .text
-            .global _start
+.global _start
 _start:     la      t0, test_num    # t0 = address of data word
             lw      t0, (t0)        # t0 = data word
 
@@ -14,5 +13,4 @@ loop:       beqz    t0, end         # loop until t0 has no more 1s
 
 end:        j       end             # wait here
 
-            .data
 test_num:   .word   0x103fe00f      # sample data

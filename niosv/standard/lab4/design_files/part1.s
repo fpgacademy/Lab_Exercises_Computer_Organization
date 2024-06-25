@@ -1,7 +1,6 @@
 # This program uses the Terminal window
 
-            .text
-            .global _start 
+.global _start 
 _start:     li      sp, 0x20000         # set up the stack
             la      a0, string     
             jal     puts
@@ -15,7 +14,7 @@ end:        j       end
 .equ JTAG_UART_BASE, 0xFF201000
 # Subroutine to send a character to the JTAG UART
 #   a0: character to send
-            .global put_JTAG 
+.global put_JTAG 
 put_JTAG:   la      t2, JTAG_UART_BASE
             lw      t0, 4(t2)           # read the JTAG UART control register
             lui     t1, 0xffff0         # t1 = 0xffff0000
@@ -26,7 +25,7 @@ end_put:    ret
 
 # Subroutine to display a string on the JTAG Terminal window
 #   a0: pointer to string
-            .global puts
+.global puts
 puts:       addi    sp, sp, -8
             sw      ra, 4(sp)           # save
             sw      s0, (sp)
@@ -45,7 +44,7 @@ puts_end:   lw      s0, (sp)            # restore
          
 # Subroutine displays a hex digit on the JTAG Terminal window
 #   a0: the hex digit to display
-            .global hex_digit
+.global hex_digit
 hex_digit:  addi    sp, sp, -4
             sw      ra, (sp)
 
@@ -58,7 +57,4 @@ number:     addi    a0, a0, 0x30        # add for all ASCII codes
             addi    sp, sp, 4
             ret
 
-            .data        
 string:     .asciz  "\nDigit value: 0x" 
-
-            .end         

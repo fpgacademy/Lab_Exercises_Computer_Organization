@@ -1,5 +1,4 @@
-            .text
-            .global _start
+.global _start
 _start:     # set up stack location
             ... code |not| shown
             jal     set_timer           # initialize the timer
@@ -35,6 +34,5 @@ setup_KEY:  ... code |not| shown
             .
             ret  
 
-            .data
 counter:    .word   0                   # the counter to be displayed
 run:        .word   1                   # the amount to be added

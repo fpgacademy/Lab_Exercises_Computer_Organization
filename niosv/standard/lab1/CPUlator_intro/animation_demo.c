@@ -238,18 +238,18 @@ void erase_chars( )
 			draw_char (x, y, ' ');
 }
 
-/* setup the A9 private timer */
+/* setup the machine timer */
 void config_timer()
 {
     volatile int * timer_ptr = (int *)MTIME_BASE; // machine timer base address
 
-    int counter  = TIMEOUT;    // timeout
-    *(timer_ptr) = counter;    // write to mtimecmp low
-    *(timer_ptr + 1) = 0;      // write to mtimecmp high
+    int counter  = TIMEOUT;     // timeout
+    *(timer_ptr + 2) = counter; // write to mtimecmp low
+    *(timer_ptr + 3) = 0;       // write to mtimecmp high
 
     /* reset the timer */
-    *(timer_ptr + 2) = 0;      // write to mtime low
-    *(timer_ptr + 3) = 0;      // write to mtime high
+    *(timer_ptr) = 0;           // write to mtime low
+    *(timer_ptr + 1) = 0;       // write to mtime high
 }
 
 /* check if timer has expired */
@@ -258,12 +258,12 @@ int timer_expired()
     volatile int * timer_ptr = (int *)MTIME_BASE; // machine timer base address
 	int status, current, limit;
 
-	limit = *(timer_ptr);       // read mtimecmp
-	current = *(timer_ptr + 2); // read mtime
+	limit = *(timer_ptr + 2);   // read mtimecmp
+	current = *(timer_ptr);     // read mtime
     status = 0;
     if (current >= limit){
         status = 1;
-        *(timer_ptr + 2) = 0;   // restart timer
+        *(timer_ptr) = 0;       // restart timer
     }
     return status;
 }
@@ -475,14 +475,14 @@ void pushbutton(void)
     return;
 }
 
-/* setup A9 private timer */
+/* setup machine timer */
 void reconfig_timer(int action)
 {
     int i, counter;
     volatile int * timer_ptr = (int *)MTIME_BASE; // timer base address
 
     /* set the timer period */
-    counter = *(timer_ptr); // read mtimecmp
+    counter = *(timer_ptr + 2); // read mtimecmp
     if (action == FASTER) {
         counter = counter >> 1;
         if (counter < MIN_LOAD) {
@@ -508,5 +508,5 @@ void reconfig_timer(int action)
         else
             counter = counter << 1;
     }
-    *(timer_ptr) = counter; // write to mtimecmp
+    *(timer_ptr + 2) = counter; // write to mtimecmp
 }

@@ -255,8 +255,8 @@ decremented that value until it reached 0.  In this part you are to modify your 
 The DE1-SoC Computer includes a number of hardware timers, but for this exercise you will
 use only the {\it Machine Timer}, which is part of the Nios~V processor. As illustrated
 in Figure~\ref{fig:timer} the Machine Timer comprises two 64-bit registers. 
-The {\it mtimecmp} register is memory-mapped to address \texttt{0xFF202100}, and the 
-{\it mtime} register is mapped to address \texttt{0xFF202108}. Since these registers are
+The {\it mtime} register is memory-mapped to address \texttt{0xFF202100}, and the 
+{\it mtimecmp} register is mapped to address \texttt{0xFF202108}. Since these registers are
 64 bits in width, two Nios~V memory accesses are needed to access either register. The
 Nios~V processor can interact with the Machine Timer two mains ways: using interrupts, or
 using polled-I/O. In this exercise you will use the polled-I/O method.
@@ -266,8 +266,8 @@ using polled-I/O. In this exercise you will use the polled-I/O method.
 When using polled-IO, an easy way to interact with the Machine Timer is as follows. First, you
 store a {\it timeout} value into the {\it mtimecmp} register. If this timeout value fits 
 within a 32-bit unsigned number, then you can just store it into the low word of {\it mtimecmp}, 
-at address \texttt{0xFF202100}, and set the high-word of {\it mtimecmp}, at 
-address \texttt{0xFF202104}, to 0. The Machine Timer is always running, and its 
+at address \texttt{0xFF202108}, and set the high-word of {\it mtimecmp}, at 
+address \texttt{0xFF20210C}, to 0. The Machine Timer is always running, and its 
 current value is reflected in the {\it mtime} register. The Machine Timer increments at
 the rate of 100,000,000 cycles per second in the DE1-SoC Computer. Each time the
 value of the {\it mtime} register reaches the value stored in the {\it mtimecmp} register, 
@@ -284,10 +284,9 @@ In your program's main loop, poll on the value of the {\it mtime} register to wa
 timeout period, rather than decrementing a register as in Part III. Test and debug
 your program.
 
-~\\
 \begin{figure}[htb]
 	\begin{center}
-	\includegraphics[scale=.55]{figures/figuretimer.png}
+	\includegraphics[scale=.40]{figures/figuretimer.png}
 	\end{center}
 	\caption{The Nios~V Machine Timer registers.}
 \label{fig:timer}

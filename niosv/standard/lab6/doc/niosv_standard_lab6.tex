@@ -8,7 +8,7 @@
 ~\\
 \centerline{\huge Laboratory Exercise 6}
 ~\\
-\centerline{\large Using C code with the Nios\textsuperscript{\textregistered} V Processor}
+\centerline{\large Using C Code with the Nios\textsuperscript{\textregistered} V Processor}
 ~\\
 
 This is an exercise in using C code with the Nios\textsuperscript{\textregistered}~V processor.
@@ -63,9 +63,9 @@ Examine the assembly language code produced by the C compiler and compare it to 
 shown in Figure~\ref{fig:code}. Note that the assembly code that implements your C
 statements will not start at the address 0 in memory. Instead, at address 0 there will be 
 a sequence of instructions known as the {\it C Startup Code}. To find the assembly
-instructions that correspond to your C code, search in the \texttt{Disassembly} tab 
-(of either the {\it CPUlator} or {\it Monitor Program}) for the label {\it main}. The 
-assembly language code starting from this label implements your C code. 
+instructions that correspond to your C code when using the {\it CPUlator} search
+in the \texttt{Disassembly} tab for the label {\it main}. If using the {\it GDB} tools,
+then execute the command \texttt{disassemble main} in the {\it GDB Client}.
 \end{enumerate}
 
 \begin{figure}[H]

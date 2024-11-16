@@ -3,12 +3,15 @@ release/
 
 # iv Files
 *.swp
+*~
+*.zip
 
 .DS_Store
-niosv/standard/lab1/doc/niosv_standard_lab1.aux
-niosv/standard/lab1/doc/niosv_standard_lab1.log
-niosv/standard/lab1/doc/niosv_standard_lab1.out
-niosv/standard/lab1/doc/niosv_standard_lab1.synctex.gz
+niosv/standard/lab?/doc/niosv_standard_lab?.aux
+niosv/standard/lab?/doc/niosv_standard_lab?.pdf
+niosv/standard/lab?/doc/niosv_standard_lab?.log
+niosv/standard/lab?/doc/niosv_standard_lab?.out
+niosv/standard/lab?/doc/niosv_standard_lab?.synctex.gz
 *.aux
 *.log
 *.gz

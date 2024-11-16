@@ -14,7 +14,7 @@
 ~\\
 
 \noindent
-This is an introductory exercise for the Altera\textsuperscript{\textregistered} 
+This is an introductory exercise using the Altera\textsuperscript{\textregistered} 
 Nios\textsuperscript{\textregistered}~V processor.  The exercise uses 
 a pre-defined computer system called the {\it DE1-SoC Computer} that includes Nios~V 
 and various peripheral devices. Documentation for this computer system is available in the
@@ -41,8 +41,7 @@ assembly language. An overview of Nios~V can be found in the tutorial
 ~\\
 \noindent
 To develop and ``execute'' programs for Nios~V you will use two different
-software tools, described below: the {\it CPUlator} and the 
-{\it Gnu Project Debugger} ({\it GDB}).
+software tools, described below: the {\it CPUlator} and the {\it Monitor Program}.
 
 \begin{description}
    \item[CPUlator:] The {\it CPUlator} is a web-based simulation tool. It uses software 
@@ -50,10 +49,11 @@ software tools, described below: the {\it CPUlator} and the
    {\it DE1-SoC Computer}, including the Nios~V processor, memory, and a number of I/O devices.
    The CPUlator is an excellent tool for developing and debugging Nios~V
    programs---it runs inside a web browser, is easy to use, and does not require any
-   hardware.  The CPUlator is introduced in Part I, below. 
-   \item[GDB:] The {\it Gnu Project Debugger} is a set of industry-standard software development
-   tools. It allows you to develop and debug Nios~V programs that {\it execute in hardware} on a 
-   DE1-SoC board. The GDB tools are introduced in Part~VI.
+   hardware.
+   The CPUlator is introduced in Part I, below. 
+   \item[Monitor Program:] The {\it Monitor Program} is a software application that
+   allows you to develop and debug Nios~V programs that {\it execute in hardware} on a 
+   DE1-SoC board.  The Monitor Program is introduced in Part~V.
 \end{description}
 
 
@@ -62,7 +62,8 @@ software tools, described below: the {\it CPUlator} and the
 In this part of the lab exercise you are to watch a short video that provides an introduction to 
 the {\it CPUlator} tool. As you will see in the video, the {\it CPUlator} is a 
 full-featured software development environment that allows you to compile (assemble) and debug
-both assembly and C code for Nios~V.
+software code for Nios~V. As mentioned in the video, we are very grateful to
+Dr.~Henry Wong, who developed and maintains {\it CPUlator}. Thank you Henry!!
 
 ~\\
 Use the following \texttt{URL} to access the video:
@@ -360,65 +361,285 @@ it easier for you to visually examine the strings.
 \end{figure}
 
 \newpage
-\subsection*{Part VI: Introduction to the GDB Tools}
+\subsection*{Part VI: Introduction to the Monitor Program}
 
 \noindent
-This part of the exercise introduces the {\it Gnu Project Debugger} (GDB) tools,
-which allows you to develop and debug Nios~V code that is being executed on a
+This part of the exercise introduces the {\it Monitor Program} application software, which 
+allows you to develop and debug Nios~V code that is being executed on a
 {\it real} DE1-SoC board. As stated earlier in this exercise, you cannot use the 
 {\it CPUlator} to control a real hardware board, because the {\it CPUlator} only 
-{\it simulates} the features of the DE1-SoC Computer and does not utilize the actual hardware.
+{\it simulates} the features of the DE1-SoC Computer and does not use the actual hardware.
 
 ~\\
 \noindent
-To use GDB with Nios~V your computer must be connected by a USB cable to a 
+To use the Monitor Program software, your computer must be connected by a USB cable to a 
 DE1-SoC board (the cable has to be plugged into the {\it USB Blaster} port on the board).
-In a similar manner as described earlier in this exercise (for using the {\it CPUlator}), you 
+In a similar manner as described earlier in this exercise (when using the {\it CPUlator}), you 
 will develop software code that runs on the DE1-SoC Computer, 
 which includes Nios~V, memory, and various I/O devices.
 However, in this case you are not using a {\it simulation} of the DE1-SoC Computer. Instead, 
-the {\it DE1-SoC Computer} is implemented as a circuit which is downloaded by the GDB
-application into the FPGA device on the DE1-SoC board. GDB allows you to 
+the {\it DE1-SoC Computer} is implemented as a circuit which is downloaded by the Monitor
+Program application into the FPGA device on the DE1-SoC board. You use the Monitor Program to 
 control the Nios~V processor on the board.
 
 ~\\
 \noindent
-The remaining parts of this exercise require the use of a DE1-SoC board. The GDB
-application cannot be used without a hardware board attached to your computer.
+The remaining parts of this exercise require the use of a DE1-SoC board. The Monitor
+Program cannot be used at all without a hardware board attached to your computer.
+
+~\\
+\noindent
+The first step in using the Monitor Program is to set up a Nios~V software development
+project.  Perform the following:
+\begin{enumerate}
+\item Make sure that the power is turned on for the DE1-SoC board.
+\item Open the {\it Monitor Program} software, which leads to the window in Figure~\ref{fig:MP1}.
+
+\noindent
+To develop Nios~V software code using the Monitor Program it is necessary to create a new project.
+Select {\sf File $>$ New Project} to reach the window in Figure~\ref{fig:MP2}.
+Give the project a name and indicate the folder for the project; 
+we have chosen the project name {\it part1} in the folder {\it Exercise1$\backslash$Part1},
+as indicated in the figure. Use the drop-down menu shown in Figure~\ref{fig:MP2} to set
+the target architecture to Nios~V.
+Click {\sf Next}, to get the window in Figure~\ref{fig:MP3}.
+
+\item Now, you can select your own custom computer system (if you have one) or a 
+pre-designed (by Altera) system. As shown in Figure~\ref{fig:MP3} select the 
+{\it DE1-SoC Computer}. Once you have selected the computer system the display in the window 
+will now show where files that implement the chosen system are located. 
+Click {\sf Next}.
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=.33]{figures/Snap1.png}
+	\end{center}
+	\caption{The {\it Monitor Program} window.}
+\label{fig:MP1}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.33]{figures/Snap2.png}
+	\end{center}
+	\caption{Specify the folder and the name of the project.}
+\label{fig:MP2}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.33]{figures/Snap3.png}
+	\end{center}
+	\caption{Specification of the system.}
+\label{fig:MP3}
+\end{figure}
+
+\item In the window in Figure~\ref{fig:MP4} you can specify the type of application 
+programs that you wish to run. They can be written in either assembly language
+or the C programming language.  Specify that an assembly language program will be used. 
+The {\it Monitor Program} package contains several sample programs.
+Select the box {\sf Include a sample program with the project}.
+Then, choose the {\sf Getting Started} program, as indicated in the figure, and 
+click {\sf Next}.
+
+\item The window in Figure~\ref{fig:MP5} is used to specify the source file(s) that contain the
+application program(s).
+Since we have selected the {\it Getting Started} program, the window indicates the source
+code file for this program. This window also allows the user to specify the starting point in the
+selected application program. The default symbol is {\it \_start}, which is used
+in the selected sample program. Click {\sf Next}. 
+
+\item The window in Figure~\ref{fig:MP6} indicates some system parameters.
+Note that the figure indicates that the {\it DE-SoC [USB-1]} cable is selected to provide 
+the connection between the DE-series board and the host computer.  This is the name assigned 
+to the Altera USB Blaster connection between the computer and the board.  
+If no \texttt{Host Connection} is shown, click on the \texttt{Refresh} button. 
+
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.3]{figures/Snap4.png}
+	\end{center}
+	\caption{Selection of an application program.}
+\label{fig:MP4}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.3]{figures/Snap5.png}
+	\end{center}
+	\caption{Source files used by the application program.}
+\label{fig:MP5}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.33]{figures/Snap6.png}
+	\end{center}
+	\caption{Specify the system parameters.}
+\label{fig:MP6}
+\end{figure}
+
+\item The window in Figure~\ref{fig:MP7} displays the names of Assembly sections that will
+		  be used for the program, and allows the user to select a target memory location
+		  for each section. In this case only the .{\it text} section, which corresponds to
+		  the program code (and data), will be used. As shown in the figure, the .{\it text}
+		  section is targeted to the memory in the DE-series board that is mapped to start at
+		  address 0. 
+Click {\sf Save} to complete the specification of the new project.
+
+\item After your project is saved, you can download the DE1-SoC Computer to your board.
+Click on \texttt{Actions $>$ Download system}. Observe the messages in the 
+\texttt{Info \& Errors} area in the Monitor Program screen
+to see when the {\it Quartus Programmer}, which performs the download, is finished. 
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.33]{figures/Snap7.png}
+	\end{center}
+	\caption{Specify the program memory settings.}
+\label{fig:MP7}
+\end{figure}
+
+\item Having downloaded the computer system into the FPGA on your DE1-SoC board, 
+we can now load and run the sample program.
+In the main Monitor Program window, shown in Figure~\ref{fig:MP9}, 
+select {\sf Actions $>$ Compile \& Load} 
+to assemble the program and load it into the memory on the board.
+Figure~\ref{fig:MP9} shows the Monitor Program window after the sample program has been loaded. 
+\item Run the program by selecting {\sf Actions $>$ Continue} or
+by clicking on the toolbar icon \hbox{\includegraphics[scale=0.45]{figures/Cont.png}}, 
+and observe the patterns displayed on the LEDs. 
+\item Pause the execution of the sample program by clicking on the 
+icon \hbox{\includegraphics[scale=0.4]{figures/Pause.png}}, 
+and disconnect from this session
+by clicking on the icon \hbox{\includegraphics[scale=0.45]{figures/Disconn.png}}, 
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.33]{figures/Snap11.png}
+	\end{center}
+	\caption{The monitor window showing the loaded sample program.}
+\label{fig:MP9}
+\end{figure}
+
+\end{enumerate}
+
+\subsection*{Part VII}
+~\\
+~\\
+\noindent
+Now, we will explore some features of the Monitor Program by using the Nios~V
+assembly-language code from Part II, which finds the largest number in a 
+list of 32-bit integers that is stored in the memory. For convenience, the code is reproduced 
+in Figure~\ref{fig:code_repeat}.
+
+\begin{figure}[H]
+\begin{center}
+\lstinputlisting[style=defaultNiosVStyle]{../design_files/part2.s}
+\end{center}
+\caption{Assembly-language program that finds the largest number.}
+\label{fig:code_repeat}
+\end{figure}
 
 ~\\
 \noindent
 Perform the following:
 
 \begin{enumerate}
-\item
-Before using GDB with Nios~V, some necessary software and hardware tools have to be installed 
-onto your computer. The procedure for installing these tools is described in the tutorial
-{\it Using GDB with Nios~V}, which is available as part of the 
-\texttt{Computer Organization System Design} tutorials (version 24.1) on
+\item Create a new folder for this part of the exercise, with a name such as {\it Part2}.  
+Create a file named {\it part2.s} and enter the code from Figure~\ref{fig:code_repeat} into this
+file.  Use the Monitor Program to create a new project in this folder; we have chosen the 
+project name {\it part2}.  When you reach the window in Figure~\ref{fig:MP4} 
+choose {\sf Assembly Program} but do not select a sample program. Click {\sf Next}.
+\item Upon reaching the window in Figure~\ref{fig:MP5}, you have to specify the source
+code file for your program. Click {\sf Add} and in the pop-up box that appears 
+indicate the desired file name,
+{\it part2.s}.  Click {\sf Next} to get to the window in Figure~\ref{fig:MP6}. 
+Again click {\sf Next} to get to the window in Figure~\ref{fig:MP7}. Notice that the 
+SDRAM is selected as the memory device.  Your program will be loaded starting at
+address 0 in this memory.  Click {\sf Save}. Note that you do not need to download 
+the DE1-SoC Computer system to your board, as you already programmed the FPGA chip when
+performing Part VI.
+
+\item Compile and load the program. The
+Monitor Program will display a disassembled view of the machine code loaded
+in the memory, as indicated in Figure~\ref{fig:MP11}. 
+
+\item Execute the program.
+When the code is running, you will not be able to see any changes
+(such as the contents of registers or memory locations) in the display for the Monitor Program,
+because it does not communicate with the Nios~V processor while code is being
+executed.  But, if you pause the program then the Monitor Program window will be updated.
+Pause the program 
+and observe that the processor stops within the endless loop {\bf stop: j stop}.
+Note that the largest number found in the sample list is 8 as indicated
+by the contents of register {\it t3}. This result is also stored in memory at the label
+{\it result}.  The address of the label {\it result} for this program in the Monitor
+Program is {\sf 0x00000038}.
+Use the Monitor Program's \texttt{Memory} tab, as illustrated in Figure~\ref{fig:MP_mem},
+to verify that the resulting value 8 is stored in the correct location.
+
+\item You can return control of the program to the start by clicking on the icon 
+\hbox{\includegraphics[scale=0.4]{figures/Restart.png}}, or by selecting 
+{\sf Actions} $>$ {\sf Restart}. 
+Do this and then single-step through the program by clicking on the icon
+\hbox{\includegraphics[scale=0.4]{figures/Step.png}}. Watch how the instructions change the 
+data in the processor's registers.
+
+\item Double-click on the {\sf pc} register in the Monitor Program and then set the program
+counter to 0. This action has the same effect as
+clicking on the restart icon \hbox{\includegraphics[scale=0.4]{figures/restart.png}}. 
+
+\item Now set a breakpoint at address {\sf 0x0000002C} by clicking on the gray bar to
+the left of this address, as illustrated in Figure~\ref{fig:MP13}. Restart the program and run 
+it again.  Observe the contents of register {\it t3} each time the instruction at the
+breakpoint, which is \texttt{j loop}, is reached.
+
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.33]{figures/Part2.png}
+	\end{center}
+	\caption{The disassembled view of the program in Figure~\ref{fig:code}.}
+\label{fig:MP11}
+\end{figure}
+
+~\\
+~\\
+{\bf Final Comments}
+
+~\\
+\noindent
+You may also want to implement the Nios~V programs from Parts III to V, to gain more
+experience with the Monitor Program application.
+
+~\\
+\noindent
+In this exercise we
+have provided only a brief introduction to the features of the Monitor Program
+application software. A more detailed discussion is 
+available in the tutorial {\it Monitor Program Tutorial for the Nios~V Processor}, 
+which is available as part of the 
+\texttt{Computer Organization System Design} tutorials (version 23.1) on
 {\small \href{https://www.fpgacademy.org/tutorials.html} {FPGAcademy.org}}.
-In the discussion below we assume that you have already installed the required tools onto 
-your computer.
+This tutorial may also be available within the Monitor Program itself via the command
+{\sf Help $>$ Tutorial}.
 
-\item 
-Work through the instructions in the tutorial {\it Using GDB with Nios~V} up to the end of 
-Section 4.2. That section of the document introduces key features of the GDB tools, 
-using the assembly code from Part II of this exercise as an example. In the tutorial, the
-program from Part II is called {\it largest.s}. You will learn how to
-assemble and link the assembly code to create an executable file, how to start GDB with
-this file loaded into the memory on the DE1-SoC board, and how to control the Nios~V
-processor to examine/execute/debug the assembly code and data used in the program.
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.3]{figures/memory.png}
+	\end{center}
+	\vspace{-0.5cm}\caption{Displaying the result in the memory tab.}
+\label{fig:MP_mem}
+\end{figure} 
 
-\item 
-Once you have learned the basic GDB commands from the above example, you may want to
-gain additional experience with GDB by implementing the Nios~V programs from Parts III to~V
-on the DE1-SoC board. As described in the document {\it Using GDB with Nios~V}, the GDB
-tools are executed by using the {\it Gnu make} program in the {\it Windows PowerShell}
-command-line environment.  Thus, you will need to make a new {\it Makefile} for use with each of
-the programs from Parts III to~V. This {\it Makefile} will be identical to one used for the 
-{\it largest.s} example, except you will replace the filename {\it largest.s} that is
-specified at the beginning of the {\it Makefile} with one of {\it part3.s}, {\it part4.s}, 
-or {\it part5.s}. 
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.3]{figures/break.png}
+	\end{center}
+	\vspace{-0.5cm}\caption{Setting a breakpoint.}
+\label{fig:MP13}
+\end{figure} 
 
 \end{enumerate}
 

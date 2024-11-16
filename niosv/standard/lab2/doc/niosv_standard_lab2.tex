@@ -24,7 +24,7 @@ laboratory exercise can be done using any DE-series board that supports Nios~V).
 As described for Laboratory Exercise 1, you may want to develop and debug your Nios~V
 programs by using the {\it CPUlator} simulation tool. If you have access to a physical DE1-SoC
 board, then you may also want to implement your Nios~V programs on the DE1-SoC hardware by 
-using the {\it Monitor Program} application.
+using the {\it GDB} tools. 
 
 \section*{Part I}
 \addcontentsline{toc}{1}{Part I}
@@ -52,12 +52,11 @@ AND operations to find the required result---make sure that you understand how t
 
 \newpage
 \item
-If you are using the {\it Monitor Program}, then make a new project in the folder where you 
-stored the {\it part1.s} file. Use the DE1-SoC Computer for your project. If you are using 
-{\it CPUlator}, then no project is used---you would just load the file {\it part1.s} into 
-the {\it CPUlator} as we discussed in Laboratory Exercise 1.
+You can either use the {\it CPUlator} to simulate the execution of the {\it part1.s} program, or
+use the GDB tools to run the program on a DE1-SoC board (or you could do {\it both}). 
+
 \item
-Compile and load the program. Fix any errors that you encounter (if you mistyped some of
+Compile and run the program. Fix any errors that you encounter (if you mistyped some of
 the code). Once the program is loaded into memory in your DE1-SoC board (or the {\it simulated}
 memory in {\it CPUlator}), single step through the code to observe the program's operation.
 \end{enumerate}
@@ -81,7 +80,7 @@ data that you placed in memory. Keep track of the longest string of 1's in any o
 and have this result in register {\it s0} when your program completes execution. 
 An outline of the required code is shown in Figure~\ref{fig:code2}.
 \item Make sure to use breakpoints or single-stepping in the {\it CPUlator} and/or 
-{\it Monitor Program} to observe what happens each time the {\it ones} subroutine is called.
+{\it GDB} tools to observe what happens each time the {\it ones} subroutine is called.
 \end{enumerate}
 
 \section*{Part III}

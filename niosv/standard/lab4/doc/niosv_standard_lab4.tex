@@ -25,11 +25,10 @@ some parts of this exercise may need to be modified to suit the features of your
 The DE1-SoC Computer includes a {\it JTAG} port that implements a communication link between the 
 DE1-SoC~board and its host computer. This link can be used by the Altera 
 Quartus\textsuperscript{\textregistered} Prime software to transfer FPGA programming files 
-into the DE1-SoC~board, and by the {\it Monitor Program} to communicate with Nios~V.  
+into the DE1-SoC~board, and by the {\it GDB} tools to communicate with Nios~V.  
 The JTAG port also includes a UART, which can be used to transfer character (text) data 
-between Nios~V and the host computer. This character data appears in the {\it Terminal} window,
-which is a feature that is available in both the {\it Monitor Program} application and in the 
-{\it CPUlator} Simulator.
+between Nios~V and the host computer. This character data appears in a {\it Terminal} window,
+which is a feature that can be used in both the {\it CPUlator} simulator and the {\it GDB} tools.
 
 ~\\
 The Nios~V processor can ``print'' character data onto the Terminal window by outputting that
